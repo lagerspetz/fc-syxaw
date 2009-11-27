@@ -1,0 +1,7 @@
+title "Server (drache)"
+cleanimage drache
+createprop syxaw.syncd=true fc.dessy.syncdirtree=true syxaw.initfs=true syxaw.nfsd=false
+create drache syxaw-roots
+:drache cp -rv ../../miniimage .
+:drache echo drache-ready
+

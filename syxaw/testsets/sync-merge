@@ -1,0 +1,38 @@
+# Simple directory merging test, tests basic dir merge
+createprop syxaw.firstversion=10
+create --clean buzz
+createprop syxaw.firstversion=20
+create --clean rex
+
+# Set up initial struct
+:rex ln buzz/
+:rex touchf //buzzf-0 b22f0:1024
+:rex mkdir //buzzd-0
+:rex mkdir //buzzd-1
+:rex touchf //buzzd-0/buzzf-1 b22f1:1024
+:rex sync
+
+# Changes on rex: insf, mvdir
+:rex mv //buzzd-0 //buzzd-RENAMED
+:rex touchf //buzzd-1//buzzf-2 b22f2:1024
+
+# Changed on buzz: updatef, rmf
+:buzz touchf //buzzd-0/buzzf-1 b22f12:998
+:buzz rm //buzzf-0
+
+# Sync
+:rex sync
+
+# Verify
+:buzz verify --noexist //buzzf-0
+:buzz verify //buzzd-RENAMED
+:buzz verify //buzzd-RENAMED//buzzf-1 11 * -. b22f12:998
+:buzz verify //buzzd-1
+:buzz verify //buzzd-1//buzzf-2 10 * -. b22f2:1024
+:rex verify --noexist //buzzf-0
+:rex verify //buzzd-RENAMED
+:rex verify //buzzd-RENAMED//buzzf-1 * 11 .- b22f12:998
+:rex verify //buzzd-1
+:rex verify //buzzd-1//buzzf-2 * 10 .- b22f2:1024
+
+# arch-tag: ccf6031d-4213-44c0-901e-b5fb4179c5c2

@@ -1,0 +1,5 @@
+The jar should contain all classes in the foundation profile
+(used to validate library calls during build time)
+
+This jar was build from the Suns cdcfoundation 1.0 source code package
+by combining foundation.jar and btclasses.zip

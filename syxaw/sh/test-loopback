@@ -1,0 +1,263 @@
+#!/bin/sh
+# arch-tag: 04bd1b76-0823-4019-8630-00451c134f42
+PATH=$PATH:`dirname $0` # Find scripts if in this dir
+echo Mount point 1 is $1
+echo Mount point 1 is $2
+echo Image is $3
+export SYXAW_GOPTS="-Dsyxaw.compressdata=false $SYXAW_GOPTS -DZsyxaw.logfilter=-."'* -Dsyxaw.loglevel=999 -Dsyxaw.debug.xfs.showsyncprogress=true'
+DEBUGOPTS="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,address=42100,suspend=y"
+USE_CHANGED1= #-Dsyxaw.debug.dirmod=false
+USE_CHANGED2= #-Dsyxaw.debug.dirmod=false
+DEBUG1= #$DEBUGOPTS
+DEBUG2= #$DEBUGOPTS
+STORE1=-Dsyxaw.storageprovider=\
+fc.fp.syxaw.storage.hierfs.HfsStorageProvider
+STORE2=-Dsyxaw.storageprovider=\
+fc.fp.syxaw.storage.hierfs.HfsStorageProvider
+CAPTURE_DATA= #lbtest-traffic
+RQPORT_TWO=42000
+IMAGEFILE=$3
+DID1=localhost
+DID2=`hostname`
+ONE=$1
+TWO=$2
+FACIT=lbtest-tmp
+EONE="sexec $DID1 42002"
+ETWO="sexec $DID2 42003"
+
+# Verify environment
+if test -z $1 || test -z $2; then
+        echo "Usage: lbtest root1 root2 image [script] [config]"
+        exit -1; 
+fi
+
+if test -z `which syxaw`; then 
+        echo "no syxaw binary"; 
+        exit -1;
+fi
+
+#Verify no hangers
+if [ -f `basename $ONE`.pid ]; then
+    echo Killing old processes
+    pkill -P $(<`basename $ONE`.pid)
+    pkill -P $(<`basename $TWO`.pid)
+fi
+
+# Check images
+if test -n "`ls -A $1`"; then 
+ echo Image dir $1 not empty, hit any key twice to clean 
+ read
+ read
+ rm -rf $1/* $1/.syxaw*
+fi
+if test -n "`ls -A $2`"; then 
+ echo Image dir $2 not empty, hit any key twice to clean 
+ read 
+ read 
+ rm -rf $2/* $2/.syxaw*
+fi
+
+#lbtest-tmp
+mkdir -p $FACIT
+if test -n "`ls -A $FACIT`"; then 
+ echo Facit dir $FACIT not empty, hit any key twice to clean 
+ read 
+ read 
+ rm -rf $FACIT/* 
+fi
+
+# Clean root attributes
+
+if test -n "$CAPTURE_DATA"; then 
+    echo Capturing traffic to $CAPTURE_DATA
+    mkdir -p $CAPTURE_DATA
+    RQPORT_TWO=42004
+    mini-inetd $RQPORT_TWO ncdump DUMMY localhost 42000 $CAPTURE_DATA/cap > \
+     $CAPTURE_DATA/log 2>&1 &
+    echo $! > $CAPTURE_DATA/pid
+fi
+
+if test `uname | grep -i cygwin`; then
+  echo 'lbtest: I seem to be running on cygwin'
+  ONE=`cygpath -ad $ONE`
+  TWO=`cygpath -ad $TWO`
+fi
+
+# Start syxaw-1 (server) instance; currently j2se is required 
+
+syxaw-j2se $DEBUG1 -Dsyxaw.http.listenport=42000 -Dsyxaw.http.requestport=42001 -Dsyxaw.initfs=true -Dsyxaw.nfsd=false -Dsyxaw.deviceid=$DID1 -Dsyxaw.cliserver.oneshot=true -Dsyxaw.cliserver.port=42002 -Dsyxaw.rmiapi=false -Dsyxaw.debug.dirmod=true -Dsyxaw.firstversion=10000 $STORE1 $USE_CHANGED1 -Dsyxaw.rootfolder=$ONE > `basename $ONE`.log 2>&1 &
+echo $! > `basename $ONE`.pid
+
+# Start syxaw-2 (client)
+syxaw-cvm $DEBUG2 -Dsyxaw.http.listenport=0 -Dsyxaw.syncd=false -Dsyxaw.http.requestport=$RQPORT_TWO -Dsyxaw.initfs=true -Dsyxaw.nfsd=false -Dsyxaw.deviceid=$DID2 -Dsyxaw.cliserver.port=42003 -Dsyxaw.cliserver.oneshot=true -Dsyxaw.rmiapi=false -Dsyxaw.debug.dirmod=true -Dsyxaw.firstversion=20000 $STORE2 $USE_CHANGED2 -Dsyxaw.rootfolder=$TWO -Dsyxaw.log.file=`basename $TWO`.log &
+echo $! > `basename $TWO`.pid
+
+echo Waiting for syxaw-1 to go up
+sleep 3
+while test "`$EONE echo nonce3145`" != nonce3145; do
+ sleep 2
+ echo trying-1
+done
+echo Waiting for syxaw-2 to go up
+while test "`$ETWO echo nonce3145`" != nonce3145; do
+ sleep 2
+ echo trying-2
+done
+sleep 2
+
+# verify ONE,TWO, and FACIT are identical
+function  verify() {
+   if diff -x '*.syxaw*' -r $ONE $FACIT > /dev/null; then
+    true; #echo OK-1 
+   else 
+    echo $ONE and $FACIT differ '(enter to continue)'; 
+    diff -q -x '*.syxaw*' -r $ONE $FACIT 
+    read 
+   fi 
+
+   if diff -x '*.syxaw*' -r $ONE $TWO > /dev/null; then
+    true; #echo OK-2 
+   else 
+    echo $ONE and $TWO differ '(enter to continue)'; 
+    diff -q -x '*.syxaw*' -r $ONE $TWO 
+    read 
+   fi 
+}
+
+# p1 = target (also always facit)
+function untar() {
+ tar zxf $IMAGEFILE -C $1 
+ tar zxf $IMAGEFILE -C $FACIT
+}
+
+# p1 = root, p2=to clean
+function deltree() {
+ #for f in `echo $1/$2 | xargs -n1 dirname | sort | uniq`; do   
+ #   $EONE touch $f > /dev/null   
+ #   $ETWO touch $f > /dev/null      
+ #done
+ rm -rf "$1"/$2 #Quoted $1 for cgwin paths   
+ rm -rf $FACIT/$2   
+}
+
+# p1 = root, p2=pathname
+function insertd() {
+    mkdir -p "$1"/$2
+    mkdir -p $FACIT/$2
+}
+
+# p1 = root, p2=pathname, p3=len kb (optional)
+function touchf() {
+    #echo Before-Flags on one
+    #$EONE ls $ONE/$2
+    sleep 1.5 # for sake of modstamp
+    SIG="`date` `date +%s:%N`"
+    echo $SIG >> $1/$2
+    echo $SIG >> $FACIT/$2
+    if test -n $3; then
+      dd if=/dev/urandom of=$1/$2 bs=1024 count=$3 >/dev/null 2>&1
+      cp $1/$2 $FACIT/$2
+    fi;
+    #echo Flags on one
+    #$EONE ls $ONE/$2
+    #echo Flags on two
+    #$ETWO ls $TWO/$2
+    #read
+}
+
+# p1 = root, p2=oldname, p3=newname
+function move() {
+    mv "$1"/$2 "$1"/$3
+    mv $FACIT/$2 $FACIT/$3
+}
+
+function ssync() {
+    #echo -n "flag, "
+    #$EONE flagtree $ONE # Unneccesary if dirmod=hardset to true
+    #$ETWO flagtree $TWO
+    sleep 1.5
+    `which sync` # Trick to execb binary, not any def'd fun 
+    $ETWO sync $TWO
+}
+
+function syncv() {
+    ssync
+    verify
+    #sleep 1.5
+}
+
+function conflict() {
+    $ETWO conflict $1/$2 $3
+}
+
+function log() {
+    $ETWO log $*
+}
+
+#######################################################################
+#Link roots 2->1
+$ETWO ln $DID1/ $TWO
+echo Initial sync 
+syncv
+echo Initial image on $ONE, now `date`
+untar $1
+#$EONE treeflags $ONE
+#echo HIT
+#read
+syncv
+if test -n "$4"; then
+    echo Running script $4
+    source $4
+    echo Script done
+else
+    echo Delete all on 2
+    deltree $TWO '*'
+    syncv
+    echo Initial image on $TWO, now `date`
+    untar $2
+    syncv
+    echo --Empty lap---, now `date`
+    syncv
+    echo Inserts on $1 and $2
+    insertd $ONE dir-from-1
+    insertd $TWO CVS/dir-from-2
+    touchf $ONE 100kb-file-1 100
+    touchf $TWO 100kb-file-2 100
+    syncv
+    echo Moves
+    move $ONE dir-from-1 CVS
+    move $TWO CVS/dir-from-2 .
+    syncv
+    echo Touch existing file on $ONE
+    touchf $ONE 100kb-file-1
+    syncv
+#    echo Touch existing file on $TWO
+#    touchf $TWO 100kb-file-1
+#    echo HIT
+#    read
+    syncv
+#    echo Delete all on 1
+#    deltree $ONE '*'
+#    read
+#    syncv
+fi
+echo Enter twice to end
+read 
+read 
+if test -n "$CAPTURE_DATA"; then
+    MPID=`cat $CAPTURE_DATA/pid`
+    echo Killing mini-inetd $MPID
+    kill $MPID
+fi
+echo quitting 1
+$EONE quit
+echo quitting 2
+$ETWO quit
+rm -rf $1/* $1/.syxaw*
+rm -rf $2/* $2/.syxaw*
+rm -rf $FACIT/*
+rm `basename $ONE`.pid
+rm `basename $TWO`.pid
+echo done
+
+

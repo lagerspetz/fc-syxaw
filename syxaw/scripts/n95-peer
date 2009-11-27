@@ -1,0 +1,6 @@
+rdzcli n95 23902
+cleanimage buzz
+createprop syxaw.firstversion=1000 syxaw.uid.seed=314
+create --debug buzz syxaw-roots 40000
+:n95 echo N95-is-alive
+proxy 23902

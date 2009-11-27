@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- This is the 2006 demo doc -->
+<?xml-stylesheet type="text/xml" href="simple-docbook.xsl"?>
+<book id="1">
+  <chapter id="chap_01">
+    <title id="8">What is Linux?</title>
+    <para id="2">Linux is an operating system that was initially created as a hobby by a young student, Linus Torvalds, at the University of Helsinki in Finland. Linus had an interest in Minix, a small UNIX system, and decided to develop a system that exceeded the Minix standards. He began his work in 1991 when he released version 0.02 and worked steadily until 1994 when version 1.0 of the Linux Kernel was released. The kernel, at the heart of all Linux systems, is developed and released under the GNU General Public License and its source code is freely available to everyone. It is this kernel that forms the base around which a Linux operating system is developed. There are now literally hundreds of companies and organizations and an equal number of individuals that have released their own versions of operating systems based on the Linux kernel. More information on the kernel can be found at our sister site, LinuxHQ and at the official Linux Kernel Archives. The current full-featured version is 2.6 (released December 2003) and development continues.</para>
+    <itemizedlist id="3">
+      <listitem id="4"><para id="5">What is Linux?</para></listitem>
+    </itemizedlist>
+    <sect1 id="sect_01_01"> 
+      <title id="7">History</title>
+      <para id="10">In order to understand the...</para>
+    </sect1>
+  </chapter>
+</book>
+<!-- arch-tag: 8e618582-f4c0-40cb-bc04-8664002b5cc8
+-->

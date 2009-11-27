@@ -1,0 +1,36 @@
+<tree id="0" lid="rex" nextid="#nextid#" xmlns:ref="http://www.hiit.fi/fc/xml/ref" 
+ xmlns:diff="http://www.hiit.fi/fc/xml/tdm/diff">
+  <directory id="37d5ce93" name="storage">
+    <directory id="8e944e" name=".arch-ids">
+      <file id="1ac04c6a" name="=id" version="1000" uid="BVhiVIG9g2DRFz24uk8kxA" />
+    </directory>
+    <directory id="e57b397" name="hierfs">
+      <file id="a2026bf" name="ForeignMetadata.java" version="1000" uid="7pExvL0hjbGJm1UZ76_ktQ" />
+      <file id="142f35a2" name="ObjectDb.java" version="1000" uid="6AMALmQ1r1ZLltUWJyemsA" />
+      <file id="1be880b3" name="QueryStreamFactory.java" version="1000" uid="HNHusRzV5Dpz01KZfYdDUQ" />
+      <file id="1d8b8eac" name="HfsStorageProvider.java" version="1000" uid="Wa8K0Kqx-IX2Yc1h3BsmCg" />
+      <file id="1d9c6140" name="VersionedDirectoryTree.java" version="1000" uid="Cv7v6pDKq_EWeoPNUjJYeg" />
+      <file id="21183b19" name="Toolkit.java" version="1000" uid="BJ8WvQso9kPXvrzwySeaXg" />
+      <file id="30a42c05" name="PersistentRefTree.java" version="1000" uid="0R8nUn5J-P5JoouIjRzJlQ" />
+      <file id="3335cdd8" name="SyxawFile.java" version="1000" uid="2oAsqbATLXWtERLae325uw" />
+      <file id="38f3574f" name="VersionDB.java" version="1000" uid="jonSTEU7Sc1-jMixu85RSQ" />
+      <file id="3b30aec0" name="AbstractSyxawFile.java" version="1000" uid="44bd_apNJutYEuquIDi3FQ" />
+      <file id="3f833933" name="StoredDirectoryTree.java" version="1000" uid="WqB80pKVupajhngpejjD2g" />
+      <file id="4646955c" name="FileSystem.java" version="1000" uid="Cd0L70-l46dJDSZfy2dzQg" />
+      <file id="48098b90" name="Config.java" version="1000" uid="u1scUkPxnABbSj5KjqvgSw" />
+      <file id="4f7cb77d" name="BLOBStorageImpl.java" version="1000" uid="Cw2KOYLz5YB3HRdZR_mxlw" />
+      <file id="52048cc2" name="ServerConfig.java" version="1000" uid="GCpPL050irPWnI6CPU6y9g" />
+      <file id="536269a3" name="HfsToolkit.java" version="1000" uid="S3IT4RTImlIf450heEZ0-Q" />
+      <directory id="561276e4" name=".arch-ids">
+        <file id="67959b96" name="=id" version="1000" uid="t9F0QvMoe4c79y-XWTC-vQ" />
+      </directory>
+      <file id="582968aa" name="FacetedTree.java" version="1000" uid="lJezpLqSwVPWeFVt7sohqw" />
+      <file id="589b3d0f" name="FakeVersionHistory.java" version="1000" uid="Xy5E8p_ZO6IV80Df_crKrg" />
+      <file id="59ee9929" name="LocalTree.java" version="1000" uid="nugrBQop9JUlol3dw4ueFQ" />
+      <file id="5c9f5090" name="LinkTree.java" version="1000" uid="e4FAdOtkg9qnMHTX7xqSkg" />
+      <file id="646d175a" name="Registry.java" version="1000" uid="FEm6Uj_xLjwh55CvqBMv_A" />
+      <file id="6b25a1e5" name="StringDb.java" version="1000" uid="48IU_OfTmVPN-_G0he_nzA" />
+      <file id="6f6b6d11" name="AbstractFileSystem.java" version="1000" uid="_3_blm-VPyYqBuAJLzgkZw" />
+    </directory>
+  </directory>
+</tree>

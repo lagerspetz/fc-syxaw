@@ -1,0 +1,72 @@
+unless @@{fc.exper.largeset} include journal-exper-small
+if @@{fc.exper.largeset} include journal-exper-large
+unless @@{fc.docroot} createprop fc.docroot=../../../../../fc/docs
+createprop DATARTAR=@@{fc.docroot}/papers/sync-journal/dataset/@@{fc.exper.dataset}-files.tar.gz SEEDB=2601 SEEDR=0175 fc.log.level=DEBUG
+:rex ln buzz/
+# Setup
+:buzz sys tar zxf @@{DATARTAR}
+# Initial sync
+:rex sync
+@@{STATCMD}
+## begin-test-iter
+:buzz fc.syxaw.exper.SyncJournal.touchfiles --seed @@{SEEDB} --autolap --ppm @@{SPPM}
+:rex fc.syxaw.exper.SyncJournal.touchfiles --seed @@{SEEDR} --autolap --ppm @@{CPPM}
+:rex sync
+@@{STATCMD}
+## end-test-iter
+## begin-test-iter
+:buzz fc.syxaw.exper.SyncJournal.touchfiles --seed @@{SEEDB} --autolap --ppm @@{SPPM}
+:rex fc.syxaw.exper.SyncJournal.touchfiles --seed @@{SEEDR} --autolap --ppm @@{CPPM}
+:rex sync
+@@{STATCMD}
+## end-test-iter
+## begin-test-iter
+:buzz fc.syxaw.exper.SyncJournal.touchfiles --seed @@{SEEDB} --autolap --ppm @@{SPPM}
+:rex fc.syxaw.exper.SyncJournal.touchfiles --seed @@{SEEDR} --autolap --ppm @@{CPPM}
+:rex sync
+@@{STATCMD}
+## end-test-iter
+## begin-test-iter
+:buzz fc.syxaw.exper.SyncJournal.touchfiles --seed @@{SEEDB} --autolap --ppm @@{SPPM}
+:rex fc.syxaw.exper.SyncJournal.touchfiles --seed @@{SEEDR} --autolap --ppm @@{CPPM}
+:rex sync
+@@{STATCMD}
+## end-test-iter
+## begin-test-iter
+:buzz fc.syxaw.exper.SyncJournal.touchfiles --seed @@{SEEDB} --autolap --ppm @@{SPPM}
+:rex fc.syxaw.exper.SyncJournal.touchfiles --seed @@{SEEDR} --autolap --ppm @@{CPPM}
+:rex sync
+@@{STATCMD}
+## end-test-iter
+## begin-test-iter
+:buzz fc.syxaw.exper.SyncJournal.touchfiles --seed @@{SEEDB} --autolap --ppm @@{SPPM}
+:rex fc.syxaw.exper.SyncJournal.touchfiles --seed @@{SEEDR} --autolap --ppm @@{CPPM}
+:rex sync
+@@{STATCMD}
+## end-test-iter
+## begin-test-iter
+:buzz fc.syxaw.exper.SyncJournal.touchfiles --seed @@{SEEDB} --autolap --ppm @@{SPPM}
+:rex fc.syxaw.exper.SyncJournal.touchfiles --seed @@{SEEDR} --autolap --ppm @@{CPPM}
+:rex sync
+@@{STATCMD}
+## end-test-iter
+## begin-test-iter
+:buzz fc.syxaw.exper.SyncJournal.touchfiles --seed @@{SEEDB} --autolap --ppm @@{SPPM}
+:rex fc.syxaw.exper.SyncJournal.touchfiles --seed @@{SEEDR} --autolap --ppm @@{CPPM}
+:rex sync
+@@{STATCMD}
+## end-test-iter
+## begin-test-iter
+:buzz fc.syxaw.exper.SyncJournal.touchfiles --seed @@{SEEDB} --autolap --ppm @@{SPPM}
+:rex fc.syxaw.exper.SyncJournal.touchfiles --seed @@{SEEDR} --autolap --ppm @@{CPPM}
+:rex sync
+@@{STATCMD}
+## end-test-iter
+## begin-test-iter
+:buzz fc.syxaw.exper.SyncJournal.touchfiles --seed @@{SEEDB} --autolap --ppm @@{SPPM}
+:rex fc.syxaw.exper.SyncJournal.touchfiles --seed @@{SEEDR} --autolap --ppm @@{CPPM}
+:rex sync
+@@{STATCMD}
+## end-test-iter
+
+ 

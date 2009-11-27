@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- This is the 2006 demo doc -->
+<?xml-stylesheet type="text/xml" href="simple-docbook.xsl"?>
+<book id="1">
+  <chapter id="chap_01">
+    <title id="8">What is Linux?</title>
+    <para id="2">We will start..</para>
+    <itemizedlist id="3">
+      <listitem id="4"><para id="5">What is Linux?</para></listitem>
+    </itemizedlist>
+    <sect1 id="sect_01_01"> 
+      <title id="7">History</title>
+      <para id="10">In order to understand the...</para>
+    </sect1>
+  </chapter>
+</book>
+<!-- arch-tag: 8e618582-f4c0-40cb-bc04-8664002b5dd8
+-->

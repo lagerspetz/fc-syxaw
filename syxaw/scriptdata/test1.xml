@@ -1,0 +1,5 @@
+<root id="r">
+<foo id="f">
+<bar id="b" foo="quux"/>
+</foo>
+</root>

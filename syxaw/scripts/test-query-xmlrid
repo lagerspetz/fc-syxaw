@@ -1,0 +1,23 @@
+# arch-tag: 7820c93f-57ca-47f5-8780-abe24849331e
+createprop syxaw.proto.branchfence=1
+createprop syxaw.uid.seed=42 
+cleanimage buzz
+create --debug buzz syxaw-roots 40000
+#unset seed
+createprop syxaw.uid.seed
+cleanimage rex
+create --debug rex syxaw-roots 40001
+:buzz sys cp scriptdata/dir0.xml //large.xml
+:buzz verify //large.xml * * * c751c07796789ea52ad060296f43527d49fcc59f
+:buzz ls
+:rex ln buzz/5DwIT0u7K_GDne5GbYUstQ?xmlr-id/8e944e //small.xml
+:rex sync //small.xml
+:rex verify //small.xml * * * 2cefc676d766f8a843011c1e7f518f3e180529f9
+# Make edit on rex
+:rex sys cp scriptdata/dir0-1.xml //small.xml
+:rex verify //small.xml * * * d6c8c32a95d036a59e90a332e932bf61451224c1
+:rex sync //small.xml
+# Verify changes
+:buzz verify //large.xml 1001 * -. e12a445ba6bdc3c5c8ad7a2cf87b0037d9b34f76
+
+echo All done!

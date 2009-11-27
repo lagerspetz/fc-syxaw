@@ -1,0 +1,15 @@
+# arch-tag: 7fc7d280-2fea-45f2-bf6f-d05c235be3e9
+createprop syxaw.proto.branchfence=1
+cleanimage buzz
+create --debug buzz syxaw-roots 40000
+cleanimage rex
+create --debug rex syxaw-roots 40001
+:rex ln buzz/
+:buzz sys cp scriptdata/ex.rdf //sample.rdf
+:buzz meta //sample.rdf type=application/rdf+xml
+:rex sync
+:rex verify //sample.rdf
+:buzz sys cp scriptdata/ex2.rdf //sample.rdf
+:rex sys cp scriptdata/ex1.rdf //sample.rdf
+:rex sync
+echo All done!

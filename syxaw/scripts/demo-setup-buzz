@@ -1,0 +1,13 @@
+title "Server (BUZZ)"
+rdzcli n95 15841
+cleanimage buzz
+createprop syxaw.firstversion=1000 syxaw.uid.seed=314
+create buzz syxaw-roots
+:buzz echo buzz-is-alive
+:n95 echo N95-is-alive
+:n95 rm //Image1
+:n95 rm //Image2
+:n95 ln buzz/
+echo "Setup on buzz done."
+
+#arch-tag: 9b065d86-f5b2-4c2d-85ab-ec1656be45f3

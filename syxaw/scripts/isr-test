@@ -1,0 +1,32 @@
+# Test demo 2006 sync capabilities
+createprop syxaw.debug.dirmod=true
+createprop syxaw.debug.calcdmod=false
+createprop syxaw.proto.branchfence=1
+createprop syxaw.uid.seed=42 
+createprop fc.log.level=INFO
+cleanimage buzz
+create --debug buzz syxaw-roots 40000
+createprop syxaw.uid.seed=314
+cleanimage rex
+create --debug rex syxaw-roots 40001
+
+# Set up links; do init
+:rex ln buzz/
+
+# Sync 1
+:rex sync 
+
+keywait
+
+# Copy 
+:buzz sys cp -r /home/ctl/tmp/isrdisk //
+
+# Sync 2
+:rex sync
+
+keywait
+
+# Sync 3
+:rex sync
+
+# arch-tag: eefd0b13-fc3c-4998-9269-cd811e020f3c

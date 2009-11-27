@@ -1,0 +1,31 @@
+# arch-tag: 20050808105422ctl
+createprop syxaw.proto.branchfence=1
+cleanimage buzz
+create buzz syxaw-roots 40000
+cleanimage rex
+create --debug rex syxaw-roots 40001
+cleanimage bo
+create bo syxaw-roots 40002
+:rex ln buzz/
+:bo ln buzz/
+:buzz touch //testfile.txt F
+:rex sync
+:bo sync
+:buzz meta // joins=1000/zork/1
+#
+# test chain mod rex->buzz->bo,mod->buzz->rex (data&md!)
+#
+:rex touch //rex.txt F rex-0001
+:rex sync
+:bo sync
+:bo touch //rex.txt F bo-0001
+:bo meta // joins=1000/zork/66
+:bo sync
+:rex sync
+#
+:rex verify // * 1005 .- * joins=1000/zork/66
+:rex verify //rex.txt * 1001 .- 2fcb8bddcb040d3451983080d523247ed4070e06
+
+echo All done!
+
+

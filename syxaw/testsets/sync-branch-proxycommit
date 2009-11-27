@@ -1,0 +1,107 @@
+# Tests the scenario where S<-A and S<-B, where S=buzz, A=rex, B=bo
+# and B switches to A, and then back. B commits branch changes to S
+# Note the presence of several --warn verifies:
+# nowarn = must pass (affects data user sees)
+# warn=detected aggressive version increments, pessimistic modflags etc.
+# The lines are written in pairs of nowarn and warns, the latter
+# being a stricter version of the former
+
+createprop syxaw.firstversion=1000
+create --clean buzz syxaw-roots 40000
+createprop syxaw.firstversion=2000
+create --clean rex syxaw-roots 40001
+createprop syxaw.firstversion=3000
+create --clean bo syxaw-roots 40002
+:rex ln buzz/
+:bo ln buzz/
+:bo sync
+:rex sync
+:bo sync
+# --- Everyone at 1002 ---
+
+# Put data on S
+:buzz touchf //data c0001:41
+:rex sync
+:bo sync
+# --- Everyone at 1003 ---
+
+# Switch B to branch on A 
+:bo join 1003/rex/2001
+:bo sync
+
+# Verify switch
+# rex @ 2002 since download causes joins to be set
+:buzz verify // 1003 * -. * joins
+:buzz verify //data 1000 * -. c0001:41
+# Flags -. due to joins having been updated -> changes from 1003!
+:rex verify // 2002 1003 -. * joins=1003/rex/2002
+:rex verify //data 2000 1000 -. c0001:41
+:bo verify // * 2002 .- * joins=1003/rex/2002
+:bo verify //data * 2000 .- c0001:41
+
+# Do inserts on the branch (from rex and bo)
+:rex touchf //rex-from-branch c0002:42
+:bo touchf //bo-from-branch c0003:43
+:bo sync
+
+# Verify on-branch work; note +2 vers due to merge 
+:rex verify // 2004 1003 -. * joins=1003/rex/2004
+:rex verify //data 2000 1000 -. c0001:41
+:rex verify //rex-from-branch 2000 * -. c0002:42
+:rex verify //bo-from-branch 2000 * -. c0003:43
+
+:bo verify // * 2004 .- * joins=1003/rex/2004
+:bo verify //data * 2000 .- c0001:41
+:bo verify //rex-from-branch * 2000 .- c0002:42
+:bo verify //bo-from-branch * 2000 .- c0003:43
+# Verify status quo on Buzz
+:buzz verify // 1003 * -. * joins
+:buzz verify //data 1000 * -. c0001:41
+
+# Bo joins main and syncs
+:bo join 1003
+:bo sync
+
+#Verify switchback; warns are stricter variants
+:buzz verify // 1004 * .. * joins=1003/rex/2004
+:buzz verify --warn // 1004 * -. * joins=1003/rex/2004
+:buzz verify //data * * -. c0001:41
+:buzz verify --warn //data 1000 * -. c0001:41
+:buzz verify //rex-from-branch 1000 * -. c0002:42
+:buzz verify //bo-from-branch 1000 * -. c0003:43
+# Rex status quo 
+:rex verify // 2004 1003 -. * joins=1003/rex/2004
+:rex verify //data 2000 1000 -. c0001:41
+:rex verify //rex-from-branch 2000 * -. c0002:42
+:rex verify //bo-from-branch 2000 * -. c0003:43
+#Bo
+:bo verify // * 1004 .- * joins=1003/rex/2004
+:bo verify --warn //data * 1000 .- c0001:41
+:bo verify //rex-from-branch * 1000 .- c0002:42
+:bo verify //bo-from-branch * 1000 .- c0003:43
+
+# Rex joins main (is a NOP) and syncs
+
+:rex sync
+:buzz verify // * * .. * joins=1003/rex/2004
+:buzz verify --warn // 1004 * -. * joins=1003/rex/2004
+:buzz verify //data * * -. c0001:41
+:buzz verify --warn //data 1000 * -. c0001:41
+:buzz verify //rex-from-branch 1000 * -. c0002:42
+:buzz verify //bo-from-branch 1000 * -. c0003:43
+# Rex
+:rex verify // * * .. * joins=1003/rex/2004
+:rex verify --warn // 2004 1004 -- * joins=1003/rex/2004
+:rex verify //data * * .- c0001:41
+:rex verify --warn //data 2000 1000 -- c0001:41
+:rex verify //rex-from-branch * * .- c0002:42
+:rex verify --warn //rex-from-branch 2000 1000 -- c0002:42
+:rex verify //bo-from-branch * * .- c0003:43
+:rex verify --warn //bo-from-branch 2000 1000 -- c0003:43
+# Bo status quo
+:bo verify // * 1004 .- * joins=1003/rex/2004
+:bo verify --warn //data * 1000 .- c0001:41
+:bo verify //rex-from-branch * 1000 .- c0002:42
+:bo verify //bo-from-branch * 1000 .- c0003:43
+
+# arch-tag: 653ff5e7-9d56-4597-a86b-e375b7843df4

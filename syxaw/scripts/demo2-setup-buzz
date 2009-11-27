@@ -1,0 +1,10 @@
+#arch-tag: 39bf805d-9a5f-43c5-82be-0e9964cd24bf
+:buzz sys cp scriptdata/fuego-id.xml //
+:buzz tverify //fuego-id.xml 
+:buzz sys cp scriptdata/fub2html.xsl // 
+:buzz tverify //fub2html.xsl
+:buzz sys cp scriptdata/bib.css //
+:buzz tverify //bib.css
+:buzz sys cp scriptdata/bib-abs.css //
+:buzz tverify //bib-abs.css
+echo "Demo phase 2 set up."

@@ -1,0 +1,10 @@
+createprop STATCMD=fc.syxaw.util.TcpForward.stat 
+createprop syxaw.debug.mt_server=true syxaw.uid.seed=32
+create --clean buzz syxaw-roots 40000
+#fc.syxaw.util.TcpForward.forward --latency 500 --bw 100000 --from 40000 --to 39999
+rdzcli rex 15841
+include journal-exper
+:buzz ls
+:rex ls
+:rex shutdown -d
+:buzz shutdown -d

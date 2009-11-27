@@ -1,0 +1,4 @@
+# List of path elements in fuego core common pool
+# needed to run the software
+../${fc.contrib}/commons-logging-1.1.1.jar
+# arch-tag: d057d3a9-4702-4ca7-a192-c1185aa85b2f

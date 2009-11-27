@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="subproject">
+  <import file="common.xml" />
+
+  <loadpath pathid="classpath.contrib.fp.1" 
+	    file="${contrib.shared.fp}" />
+
+  <loadpath pathid="classpath.build.1" 
+	    file="${contrib.shared.build}" />
+
+
+  <path id="classpath.contrib.fp">
+    <path refid="classpath.contrib.fp.1" />
+    <fileset dir="${contrib}" includes="*.jar,*.zip" 
+	     excludes="fp-*generics.jar" />
+  </path>
+
+  <path id="classpath.contrib.fp.5">
+    <path refid="classpath.contrib.fp.1" />
+    <fileset dir="${contrib}" includes="*.jar,*.zip"  excludes="fp*.jar" />
+    <fileset dir="${contrib}" includes="fp-*generics.jar" />
+  </path>
+
+  <path id="classpath.build">
+    <path refid="classpath.build.1" />
+    <fileset dir="${contrib}" includes="*.jar,*.zip" />
+  </path>
+
+  <property name="taskdefs.xml" value="taskdefs.xml" />
+  <!-- <echo>Taskdefs is ${taskdefs.xml}</echo> -->
+  <import file="${taskdefs.xml}" optional="true" />
+</project>
+<!-- arch-tag: 403f0dbb-848b-4e6f-8585-af67e5766664
+ -->

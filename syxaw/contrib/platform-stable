@@ -1,0 +1,8 @@
+# List of path elements in stable platform
+# needed by the build system
+# Now in fp-xas: ../${fc.contrib}/kxml2.jar
+${contrib}/fp-util.jar
+${contrib}/fp-raxs.jar
+${contrib}/fp-xas.jar
+# arch-tag: 49d8cab8-23a0-4d02-a346-571fe0c778f5
+

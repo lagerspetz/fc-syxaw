@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!--
+Copyright %YEAR% Helsinki Institute for Information Technology
+
+This file is a part of Fuego middleware.  Fuego middleware is free
+software; you can redistribute it and/or modify it under the terms
+of the MIT license, included as the file MIT-LICENSE in the Fuego
+middleware source distribution.  If you did not receive the MIT
+license with the distribution, write to the Fuego Core project at
+%ADDRESS%.
+-->
+
+<project name="fc" default="compile" basedir=".">
+
+  <patternset id="top.subproj.patterns">
+    <!-- Patternset holding all subproject build.xml files -->
+    <!-- This must be modified if there is a subdir/build.xml,
+         which isn't a subproject -->
+    <include name="*/build.xml" />
+    <exclude name=",,*/build.xml" /> <!-- Ignore arch and temp stuff -->
+    <exclude name="+*/build.xml" />
+  </patternset>
+
+  <property name="contrib" value="contrib/jar" />
+  <import file="common.xml" />
+  <import file="depend.xml" optional="true"/>
+
+  <path id="classpath.contrib.se">
+    <fileset dir="${contrib}" includes="*.jar" />
+    <fileset dir="${contrib}" includes="*.zip" />
+  </path>
+  
+  <path id="classpath.build">
+    <fileset dir="${contrib}" includes="*.jar" />
+    <fileset dir="${contrib}" includes="*.zip" />
+  </path>
+
+  <import file="taskdefs.xml" /> 
+  
+  <fileset id="top.subbuilds" dir=".">
+    <patternset refid="top.subproj.patterns" />      
+  </fileset>
+
+  <pathconvert property="top.srcdirs.p" refid="top.subbuilds" >
+    <globmapper from="*build.xml" to="*${src}"/>
+  </pathconvert>
+
+  <pathconvert property="top.builddirs.p" refid="top.subbuilds" >
+    <globmapper from="*build.xml" to="*${build.class}"/>
+  </pathconvert>
+
+  <macrodef name="runall">
+    <attribute name="target" />
+    <sequential>
+      <subant target="@{target}" >
+	<fileset refid="top.subbuilds" />
+	<property name="taskdefs.xml" value="ALREADYINCLUDED.taskdefs.xml" />
+    </subant>
+    </sequential>
+  </macrodef>
+
+  <property name="fc.contrib" value="contrib/jar"/>
+
+  <target name="init">
+    <uptodate property="depend.ok" targetfile="depend.xml">
+      <srcfiles dir="." includes="*/depend.xml"/>
+      <srcfiles dir="." includes="depend.xsl"/>
+    </uptodate>
+  </target>
+
+  <target name="depend" unless="depend.ok">
+    <concat destfile=",,depend.xml">
+      <header>&lt;group&gt;</header>
+      <fileset dir="." includes="*/depend.xml"/>
+      <footer>&lt;/group&gt;</footer>
+    </concat>
+    <xslt style="depend.xsl" out="depend.xml" in=",,depend.xml"/>
+    <echo>====== Dependency information updated ======</echo>
+    <echo>============ You must rerun Ant ============</echo>
+  </target>
+
+  <target name="compile" depends="init,depend" if="depend.ok">
+    <echo>%%%%%%% Building all Fuego Core Software %%%%%%</echo>
+    <antcall target="fuego-core"/>
+  </target>
+
+  <target name="clean" depends="init">
+    <runall target="clean" />
+  </target>
+
+  <target name="doc" depends="compile">
+    <path id="classpath.javadoc">
+      <path refid="classpath.contrib.se" />
+      <path path="top.builddirs.p" />
+    </path>
+    <mkdir dir="${javadoc}"/>
+    <javadoc packagenames="fc.*" excludepackagenames="fc.xml.xebu.coa.*"
+	     sourcepath="${top.srcdirs.p}" destdir="${javadoc}" 
+	     classpathref="classpath.javadoc" author="true" version="true"
+	     use="true" windowtitle="Fuego Core API" source="1.5">
+      <link offline="true" href="http://java.sun.com/j2se/1.5/docs/api"
+            packagelistLoc="${doclists}/sun"/>
+      <link offline="true" href="http://jetty.mortbay.org/javadoc/"
+            packagelistLoc="${doclists}/jetty"/>
+      <link offline="true"
+	    href="http://jakarta.apache.org/commons/logging/api/"
+	    packagelistLoc="${doclists}/logging"/>
+      <link offline="true" href="http://www.junit.org/junit/javadoc/3.8.1/"
+	    packagelistLoc="${doclists}/junit"/>
+      <link offline="true" href="http://www.xmlpull.org/v1/doc/api"
+            packagelistLoc="${doclists}/xmlpull" />
+    </javadoc>
+  </target>
+
+</project>
+
+<!-- arch-tag: b7771dfb-0f3f-4887-9cf7-d1ca8f11e574
+-->

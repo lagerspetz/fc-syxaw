@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--- This is a template build file for subprojects.
+	Customize as needed at locations marked @@.
+-->
+<!--
+Copyright %YEAR% Helsinki Institute for Information Technology
+
+This file is a part of Fuego middleware.  Fuego middleware is free
+software; you can redistribute it and/or modify it under the terms
+of the MIT license, included as the file MIT-LICENSE in the Fuego
+middleware source distribution.  If you did not receive the MIT
+license with the distribution, write to the Fuego Core project at
+%ADDRESS%.
+-->
+
+
+<project name="syxaw" default="compile" basedir=".">
+
+  <property name="syxrunner.class" 
+	    value="fc.syxaw.util.syxrunner.SyxRunner" />
+  <property name="test.class" value="@@Project test suite class"/>
+  <property name="syxaw.platform.default" value="stable"/>
+
+  <!-- Imports many common definitions and provides
+       default implementations for tasks -->	
+  <import file="../subproject.xml" />
+
+  <target name="stable" >
+    <property name="syxaw.platform" value="stable" />
+    <antcall target="clean" />
+  </target>
+
+  <target name="unstable">
+    <property name="syxaw.platform" value="unstable" />
+    <antcall target="clean" />
+  </target>
+
+  <target name="init" depends="common.init">
+    <property name="syxaw.platform" value="${syxaw.platform.default}" />
+    <echo>Deploying on platform ${syxaw.platform}</echo>
+    <property name="syxaw.platform.file" 
+	      value="${contrib}/platform-${syxaw.platform}" />
+    <loadpath pathid="classpath.platform" 
+	    file="${syxaw.platform.file}" />
+    <path id="classpath.contrib.fp">
+      <path refid="classpath.contrib.fp.1" />
+      <path refid="classpath.platform" />
+    </path>
+  </target>
+
+  <target name="syxrunner" depends="compile" >
+    <java classname="${syxrunner.class}" fork="true">
+      <!--jvmarg value="-verbose:class"/-->
+      <!--<sysproperty key="syxaw.http.lidmap" value="${syxaw.http.lidmap}" />-->
+      <syspropertyset>
+        <propertyref prefix="syxaw" />
+        <propertyref prefix="syxrunner" />
+      </syspropertyset>
+      <jvmarg line="-Dsyxaw.rmiapi=false" />
+      <jvmarg line="-Dsyxaw.nfsd=false" />
+      <jvmarg line="-Dsyxaw.loglevel=99" />
+      <jvmarg line="-Dsyxaw.xmldelta=false" />
+      <classpath>
+        <fileset dir="${build.lib}" includes="fp-syxaw.jar" />
+	<path refid="classpath.contrib.fp" />
+      </classpath>
+    </java>
+  </target>
+
+  <target name="verify-loadscripts" unless="syxrunner.scripts" >
+    <property name="scripts.dir" value="scripts" />
+    <property name="syxrunner.scriptdir" value="${scripts.dir}" />
+    <loadfile property="syxrunner.scripts" 
+            srcFile="${verifyset}" >
+	<filterchain>
+	    <striplinecomments><comment value="#" /></striplinecomments>
+	</filterchain>
+    </loadfile>	    
+  </target>
+
+  <target name="verify" depends="compile,verify-loadscripts" >
+    <echo message="Logs in verify.log" /> 
+    <property name="verify-extras.dir" value="scripts" />
+    <property name="syxrunner.logfile" value="verify.log" />
+    <property name="syxrunner.loglevel" value="4" />
+    <!-- <property name="cp.debug" refid="classpath.contrib.fp" />
+    <echo>Classpath is ${cp.debug}</echo> -->
+    <java classname="${syxrunner.class}" fork="true">
+      <syspropertyset>
+        <propertyref prefix="syxaw" />
+        <propertyref prefix="syxrunner" />
+      </syspropertyset>
+      <jvmarg line="-Dsyxaw.rmiapi=false" />
+      <jvmarg line="-Dsyxaw.nfsd=false" />
+      <jvmarg line="-Dsyxaw.loglevel=${syxrunner.loglevel}" />
+      <jvmarg line="-Dsyxaw.xmldelta=false" />
+      <classpath>
+	<fileset dir="${verify-extras.dir}" includes="*.jar" />
+        <fileset dir="${fp.build.lib}" includes="*.jar" />
+	<path refid="classpath.contrib.fp" />
+      </classpath>
+    </java>
+  </target>
+
+  <target name="verifyall" >
+    <antcall target="verify" >
+      <param name="scripts.dir" value="testsets" />
+      <param name="syxrunner.streams" value="+.*minfo.*,-.*" />
+      <param name="verifyset" value="testsets/verify" />
+    </antcall>  
+  </target>
+
+  <target name="runscript" depends="compile" >
+    <fail unless="scripts" 
+	  message="Usage: ant -Dscripts=script1[,script2,...] runscript" />
+    <echo message="Logs in +runscript.log" /> 
+    <property name="syxrunner.logfile" value="+runscript.log" />
+    <property name="syxrunner.scripts" value="${scripts}" />
+    <property name="syxrunner.scriptdir" value="scripts" />
+    <property name="syxrunner.loglevel" value="4" />
+    <java classname="${syxrunner.class}" fork="true">
+      <syspropertyset>
+        <propertyref prefix="syxaw" />
+        <propertyref prefix="fc" />
+        <propertyref prefix="syxrunner" />
+      </syspropertyset>
+      <jvmarg line="-Dsyxaw.loglevel=${syxrunner.loglevel}" />
+      <classpath>
+        <fileset dir="${fp.build.lib}" includes="fp-syxaw.jar" />
+        <fileset dir="${fp.build.lib}" includes="fc-syxrunner.jar" />
+	<path refid="classpath.contrib.fp" />
+      </classpath>
+    </java>
+  </target>
+
+  <!-- Foundation Profile -->
+
+  <target name="compile" depends="init">
+    <fp-compiler >
+      <include name="fc/**" />
+      <include name="org/apache/**" />
+      <exclude name="fc/pp/**" />
+      <exclude name="fc/syxaw/util/syxrunner/**" />
+    </fp-compiler>
+    <javac destdir="${fp.build.class}" srcdir="${src}" debug="on"
+           deprecation="on" target="1.3" source="1.3" 
+	   classpathref="classpath.contrib.fp" >
+      <include name="fc/syxaw/util/syxrunner/**" />
+    </javac>
+    <jar basedir="${fp.build.class}"
+         jarfile="${fp.build.lib}/fc-syxrunner.jar" />
+  </target>
+
+  <target name="syxaw-fp-full" depends="compile" >
+    <!-- Notes:
+	 1) We need to filter out the manifests, that's why there's (**.class) on every jar
+	 2) retroweaver needed in classpath
+    -->
+    <loadpath pathid="classpath.contrib.fpc" 
+	    file="${contrib}/fp-compact" />
+    <pathconvert property="ant.is.a.kludgy.mess" > 
+      <path>
+	<fileset dir="${contrib}" includes="*.jar" excludes="fp-*generics.jar" />
+      </path>
+      <regexpmapper from="(.*)\.jar" to="\1.jar(**.class)"/>
+    </pathconvert>
+    <path id="fpjar.injars">
+      <pathelement path="${fp.build.lib}/${fp.jarname}(**.class)" />	
+      <path path="${ant.is.a.kludgy.mess}" />      
+      <path refid="classpath.contrib.fpc" />
+      <pathelement path="${retroweaver.rt}(**.class)" />
+    </path>
+    <property name="fpjar.injarss" refid="fpjar.injars" />
+    <echo>Path ${fpjar.injarss}</echo>
+    <java fork="true" classpathref="classpath.build"
+	  classname="proguard.ProGuard" >
+      <arg line="-dontusemixedcaseclassnames" />
+      <arg 
+line="-keepclasseswithmembernames class '&quot;**&quot;' {'&quot;*&quot;'; }" /> <!--     <arg line="-whyareyoukeeping class fc.fp.util.tests.**" /> -->
+      <arg line="-ignorewarnings" />
+      <arg line="-dontoptimize" />
+      <arg line="-injars" />
+      <arg pathref="fpjar.injars" />
+      <arg line="-outjar ${fp.build.lib}/fp-syxaw-full.jar"/>
+      <arg line="-libraryjars ../${contrib.sys.fp}/fp10.jar"/>
+      <arg line="-keep public class fc.syxaw.fs.Syxaw { public '&quot;*&quot;;' } "/>
+      <arg line=
+          "-keep public class '&quot;fc.syxaw.storage.hierfs.**&quot;' { '&quot;*&quot;'; } "/>
+      <arg line=
+           "-keep class fc.syxaw.tool.SyxawCommandProcessor{public '&quot;*&quot;';}"/>
+      <arg line=
+          "-keep public class '&quot;fc.syxaw.exper.**&quot;' { '&quot;*&quot;'; } "/>
+      <arg line="-keep public class fc.pp.syxaw.Syxaw { public '&quot;*&quot;;' } "/>
+      <!-- <arg line="-whyareyoukeeping class org.xml.sax.**" /> -->
+    </java>
+  </target>
+
+</project>
+<!-- arch-tag: 6688609e-84c0-4087-bad1-bc3ae840ee60
+-->

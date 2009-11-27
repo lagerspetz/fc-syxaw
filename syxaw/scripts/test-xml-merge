@@ -1,0 +1,20 @@
+# Test XML merging; currently depends on files c:\test{,1,2}.xml existing
+# arch-tag: 456ff14c-baa9-4209-958e-9500e0b8270a
+#
+createprop syxaw.proto.branchfence=1
+cleanimage buzz
+create --debug buzz syxaw-roots 40000
+cleanimage rex
+create --debug rex syxaw-roots 40001
+:rex ln buzz/
+:rex sync
+:buzz sys cp scriptdata/test.xml //test.xml
+:buzz meta //test.xml type=text/xml
+:rex sync
+:rex cat //test.xml
+:rex sys cp scriptdata/test1.xml //test.xml
+:buzz sys cp scriptdata/test2.xml //test.xml
+:rex sync
+:rex cat //test.xml 
+# Look for zoo=rex and foo=quux attribs in merge
+echo All done

@@ -1,0 +1,19 @@
+# Tests xpath querying
+# arch-tag: 1cf60fef-2472-46b6-b6f5-bb6e987c0400
+createprop syxaw.proto.branchfence=1
+createprop syxaw.uid.seed=42 
+cleanimage buzz
+create --debug buzz syxaw-roots 40000
+#unset seed
+createprop syxaw.uid.seed
+cleanimage rex
+create --debug rex syxaw-roots 40001
+:buzz sys cp scriptdata/dir0.xml //large.xml
+:buzz verify //large.xml * * * c751c07796789ea52ad060296f43527d49fcc59f
+:buzz ls
+:rex ln buzz/5DwIT0u7K_GDne5GbYUstQ?xpath//*[@id='8e944e']//* //small.xml
+:rex sync //small.xml
+:rex cat //small.xml
+
+echo Look at the output of rex for some non-empty query result
+echo All done!

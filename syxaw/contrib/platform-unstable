@@ -1,0 +1,6 @@
+# List of path elements in unstable platform
+# needed by the build system
+${contrib}/util.jar
+${contrib}/xas.jar
+${contrib}/raxs.jar
+# arch-tag: 2b3bae62-4ade-486d-be99-93bffaa98d1f

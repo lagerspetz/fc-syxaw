@@ -1,0 +1,11 @@
+buzz-rex-bo-roundtrip
+dbg-clean-sync-buzz-rex-bo 
+test-branching-pxcommit 
+test-branching-switchjoin 
+test-query-xmlrid 
+test-query-xmlrxp
+test-query-xpath
+test-rdf-merge
+test-remote-update 
+test-xml-merge
+

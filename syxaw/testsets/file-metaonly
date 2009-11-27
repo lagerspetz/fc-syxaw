@@ -1,0 +1,25 @@
+# Tests that in case of meta mods, only new metadata gets downloaded
+createprop syxaw.firstversion=10 syxaw.uid.seed=31337 syxaw.loglevel=99
+create --clean buzz
+createprop syxaw.firstversion=20
+create --clean rex
+:buzz touchf //test 9e7f11e:1024
+:buzz ls //test
+:rex ln buzz/9dWlO3b43HNup_Azlf4pBQ //test 
+:rex sync //test
+
+:buzz meta //test type=test/testtype
+:rex touchf //test 31337:256 
+# Make local change invisible -> 
+# if no data dl, it will persist over sync
+:rex meta //test flags=.-
+
+#Ls cmds; run to check rex=.-, buzz=m.
+#:rex ls 
+#:buzz ls
+
+:rex sync //test
+:buzz verify //test 11 * -. 9e7f11e:1024 type=test/testtype
+:rex verify //test * 11 .- 31337:256 type=test/testtype
+
+# arch-tag: 16eb51e5-4e98-41f4-a1ce-9d46ee5bda98

@@ -1,0 +1,11 @@
+# Demo setup on rex
+title "Laptop (REX)"
+cleanimage rex
+createprop syxaw.firstversion=2000 syxaw.uid.seed=42
+#createprop syxaw.http.requestport=40000
+create rex syxaw-roots
+:rex echo rex-is-alive
+:rex ln buzz/
+:rex sync
+echo "Setup done."
+# arch-tag: 762b005b-4a46-4c4b-9f05-7a6460a73d7d

@@ -1,0 +1,9 @@
+<?xml version='1.0' ?>
+<ref:node id="0" xmlns:ref="http://www.hiit.fi/fc/xml/ref" xmlns:diff="http://www.hiit.fi/fc/xml/tdm/diff">
+  <ref:node id="37d5ce93">
+    <directory id="8e944e" name=".arch-ids">
+      <file id="1ac04c6a" name="CHANGED_NAME_CHANGED_NAME" version="1000" uid="BVhiVIG9g2DRFz24uk8kxA" />
+    </directory>
+    <ref:tree id="e57b397" />
+  </ref:node>
+</ref:node>

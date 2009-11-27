@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+Copyright %YEAR% Helsinki Institute for Information Technology
+
+This file is a part of Fuego middleware.  Fuego middleware is free
+software; you can redistribute it and/or modify it under the terms
+of the MIT license, included as the file MIT-LICENSE in the Fuego
+middleware source distribution.  If you did not receive the MIT
+license with the distribution, write to the Fuego Core project at
+%ADDRESS%.
+-->
+
+
+<project name="xas" default="compile" basedir=".">
+
+  <property name="test.class" value="fc.test.junit.XasTest"/>
+
+  <!-- Imports many common definitions and provides
+       default implementations for tasks -->	
+  <import file="../subproject.xml" />
+
+  <target name="compile" depends="init">
+    <fp-compiler>
+      <include name="**" />
+      <exclude name="fc/xml/xpath/**"/>
+      <exclude name="fc/test/**"/>
+      <exclude name="fc/exper/**"/>
+    </fp-compiler>
+    <!-- <echo>Using default Foundation Profile compile taget...</echo>
+    <path id="fp.bootclasspath">
+      <fileset dir=".." >
+	<include name="${contrib.sys.fp}/*.jar" />
+      </fileset>
+    </path>
+    <javac destdir="${fp.build.class}" srcdir="${src}" debug="on"
+           deprecation="on" target="1.1" source="1.3" 
+	   classpathref="classpath.contrib.fp" >
+      <bootclasspath refid="fp.bootclasspath" />
+      <include name="**" />
+      <exclude name="fc/xml/xpath/**"/>
+      <exclude name="fc/test/**"/>
+      <exclude name="fc/exper/**"/>
+    </javac>
+    <jar basedir="${fp.build.class}"
+         jarfile="${fp.build.lib}/${fp.jarname}" /> -->
+  </target>
+
+</project>
+<!-- arch-tag: 2f4a81b3-eb3e-4637-8ac8-a3f47e659e02
+-->
