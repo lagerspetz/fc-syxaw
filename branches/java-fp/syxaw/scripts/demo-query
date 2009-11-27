@@ -1,0 +1,33 @@
+# Tests xpath querying
+createprop syxaw.proto.branchfence=1
+createprop syxaw.uid.seed=42 
+cleanimage buzz
+create --debug buzz syxaw-roots 40000
+#unset seed
+createprop syxaw.uid.seed
+cleanimage rex
+create --debug rex syxaw-roots 40001
+:buzz sys cp scriptdata/fuego-id.xml //large.xml
+# ls is to lock guid on buzz
+:buzz ls
+:buzz sys cp scriptdata/fub2html.xsl //
+:buzz sys cp scriptdata/bib.css //
+:buzz sys cp scriptdata/bib-abs.css //
+:rex sys cp scriptdata/fub2html.xsl //
+:rex sys cp scriptdata/bib.css //
+:rex sys cp scriptdata/bib-abs.css //
+#:rex ln "buzz/5DwIT0u7K_GDne5GbYUstQ?xmlr-xp//entry[./extension[@name='project']/name[text()='Fuego Core']]//" //small.xml
+#:rex ln "buzz/5DwIT0u7K_GDne5GbYUstQ?xmlr-xp//*/*[@name='project']/name[text()='Fuego Core']/../../descendant-or-self::node()" //small.xml
+
+:rex ln "buzz/5DwIT0u7K_GDne5GbYUstQ?xmlr-xp//*[./*[@name='project']/name[text()='Fuego Core']]/descendant-or-self::node()" //small.xml
+:rex sync //small.xml
+#!--
+:rex verify //small.xml * * * 2cefc676d766f8a843011c1e7f518f3e180529f9
+# Make edit on rex
+:rex sys cp scriptdata/dir0-1.xml //small.xml
+:rex verify //small.xml * * * d6c8c32a95d036a59e90a332e932bf61451224c1
+:rex sync //small.xml
+# Verify changes
+:buzz verify //large.xml 1001 * -. e12a445ba6bdc3c5c8ad7a2cf87b0037d9b34f76
+
+echo All done!

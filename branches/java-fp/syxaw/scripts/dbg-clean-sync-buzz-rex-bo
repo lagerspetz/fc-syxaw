@@ -1,0 +1,19 @@
+# arch-tag: 20050810184452ctl
+createprop syxaw.proto.branchfence=1
+cleanimage buzz
+create --debug buzz syxaw-roots 40000
+cleanimage rex
+create --debug rex syxaw-roots 40001
+cleanimage bo
+create --debug bo syxaw-roots 40002
+:rex ln buzz/
+:bo ln buzz/
+:bo sync
+:rex sync
+# Note: buzz now has merge of (buzz+bo) -> bo needs one more sync
+# I.e. ver 1000 = buzz, 1001 = buzz+bo, 1002 = buzz+bo+rex
+:bo sync
+:buzz verify // 1002 * -.
+:rex verify // * 1002 .-
+:bo verify // * 1002 .-
+echo All done!

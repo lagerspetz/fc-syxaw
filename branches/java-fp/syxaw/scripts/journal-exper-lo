@@ -1,0 +1,10 @@
+createprop syxaw.debug.workers=10
+createprop syxaw.debug.mt_server=true
+create --debug --clean buzz syxaw-roots 40000 
+createprop zsyxaw.debug.batchsync=false 
+create --debug --clean rex syxaw-roots 40001 
+createprop STATCMD=fc.syxaw.util.TcpForward.stat 
+#create --clean buzz syxaw-roots 40000
+#fc.syxaw.util.TcpForward.forward --latency 0 --bw 100000 --from 40000 --to 39999
+##create --clean rex syxaw-roots 40001 
+include journal-exper

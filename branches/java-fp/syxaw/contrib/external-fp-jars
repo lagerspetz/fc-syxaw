@@ -1,0 +1,22 @@
+# List of path elements in fuego core common pool
+# needed to run the software
+../${fc.contrib}/commons-logging-1.1.1.jar
+../${fc.contrib}/servlet-api-2.3.jar
+../${fc.contrib}/org.mortbay.jetty-5.1.4.jar
+../${fc.contrib}/xmlpull_1_1_3_4c.jar
+../${fc.contrib}/junit-3.8.1.jar
+../${fc.contrib}/concurrent.jar
+../${fc.contrib}/3dm-0.1.5b1.jar
+#../${fc.contrib}/commons-httpclient-3.0.jar
+# We only use a few classes from this, e.g. ChunkedInputStream
+# Try to replace this with commons-httpclient asap
+../${fc.contrib}/axis.jar
+# FIXME: Remove jena.jar
+#../${fc.contrib}/jena.jar
+# FIXME: Renmove /capjprof.jar
+#../${fc.contrib}/capjprof.jar 
+# Used by syxrunner jar
+../${fc.contrib}/bsh-1.2b7.jar 
+../${fc.contrib}/retroweaver-rt-${retroweaver.version}.jar
+# arch-tag: 9b708da8-8ac3-40c2-8ff5-40ed6369a82c 
+

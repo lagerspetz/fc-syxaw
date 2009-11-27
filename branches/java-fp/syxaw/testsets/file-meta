@@ -1,0 +1,26 @@
+# Checks metadata updates (both ways) between buzz and rex
+createprop syxaw.firstversion=10 syxaw.uid.seed=31337 fc.log.level=DEBUG syxaw.loglevel=99
+create --clean buzz
+createprop syxaw.firstversion=20 fc.log.level=DEBUG syxaw.loglevel=99
+create --clean rex
+:buzz touchf //test 0:0
+:buzz meta //test type=application/syxrunner-test
+#:buzz ls //
+:rex ln buzz/9dWlO3b43HNup_Azlf4pBQ //test 
+:rex sync //test
+
+# Verify initial state
+:buzz verify //test 10 * -. 0:0 type=application/syxrunner-test
+:rex verify //test * 10 .- 0:0 type=application/syxrunner-test
+
+# Update md +  sync
+:rex meta //test type=application/syxrunner-UPDATED
+:rex sync //test
+
+# Verify upload
+:buzz lls //test
+:buzz verify //test 11 * -. 0:0 type=application/syxrunner-UPDATED
+:rex verify //test * 11 .- 0:0 type=application/syxrunner-UPDATED
+#:rex lls //test
+
+# arch-tag: 93b552ab-4ce5-4045-bf1f-5eff2b574b30

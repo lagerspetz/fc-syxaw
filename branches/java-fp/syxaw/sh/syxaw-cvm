@@ -1,0 +1,13 @@
+#!/bin/sh
+# arch-tag: 05e2f564-6269-40e2-8371-3c815caf28f8 
+CVM_HOME=/opt/java/cdcfoundation
+SYXAW_HOME=..
+ARCH=linux-i686
+CPATH=`echo $SYXAW_HOME/contrib/jar/*.jar | sed -e 's/\ /:/g'`;
+DEFOPTS="-Dsyxaw.http.listenport=0 -Dsyxaw.syncd=false -Dsyxaw.http.requestport=42000 -Dsyxaw.nfsd=false -Dsyxaw.cliserver.oneshot=true -Dsyxaw.cliserver.port=42002 -Dsyxaw.rmiapi=false -Dsyxaw.debug.dirmod=true -Dsyxaw.firstversion=10000"
+#-Xbootclasspath/a=$CPATH 
+#echo CMD: $CVM_HOME/build/$ARCH/bin/cvm -Djava.class.path=$SYXAW_HOME/=build/fp/fcfp-syxaw-compl.jar $DEFOPTS $SYXAW_GOPTS $* fc.fp.syxaw.fs.Syxaw 
+$CVM_HOME/build/$ARCH/bin/cvm -Xverify:all \
+-Djava.class.path=$SYXAW_HOME/=build/fp/fcfp-syxaw-compl.jar \
+$DEFOPTS $SYXAW_GOPTS $* fc.fp.syxaw.fs.Syxaw 
+#$CVM_HOME/build/$ARCH/bin/cvm -Xbootclasspath/a=$CPATH -Djava.class.path=$SYXAW_HOME/=build/fp/fcfp-syxaw.jar $DEFOPTS $SYXAW_GOPTS $* fc.fp.syxaw.fs.Syxaw 

@@ -1,0 +1,19 @@
+# List of path elements in fuego core common pool
+# needed to run the software
+../${fc.contrib}/commons-logging.jar
+../${fc.contrib}/javax.servlet.jar
+../${fc.contrib}/org.mortbay.jetty-5.1.4.jar
+../${fc.contrib}/xmlpull_1_1_3_1.jar
+../${fc.contrib}/junit.jar
+../${fc.contrib}/concurrent.jar
+../${fc.contrib}/3dm.jar
+../${fc.contrib}/kxml2.jar
+# We only use a few classes from this, e.g. ChunkedInputStream
+../${fc.contrib}/axis.jar
+# RDF stuff
+../${fc.contrib}/jena.jar
+# Used by some profiling and logging code 
+../${fc.contrib}/capjprof.jar 
+# For Syxaw CLI UI
+../${fc.contrib}/bsh-1.2b7.jar
+# arch-tag: 0df9651c-c406-4c71-8ac2-93875fe08e0f

@@ -1,0 +1,31 @@
+# Set of tests that (eventually will) form a comprehensive
+# test of Syxaw functionality. The test order in this file
+# is from basic towards more advanced functionality. Generally,
+# each test relies on functionality verified by previous tests
+# (and, hence, does not re-verify that functionality) .
+# However, each test is also self contained in that it may be executed
+# independetly of any other test. In case of failure, however,
+# it is better to use the full test set to pinpoint the fault.
+
+file-download
+file-upload
+file-meta
+
+file-metaonly 
+#FAILS due to missing vrepo for binfiles 
+#-> we don't know at which ver metaflag was reset->can't send a ref
+
+file-conflict
+
+dir-download
+dir-upload
+dir-depend
+dir-merge
+sync-emptyfs
+sync-remote-update
+sync-local-update
+sync-merge
+sync-branch-switchjoin
+sync-branch-proxycommit
+
+# arch-tag: 090b155d-74b5-4b28-8305-ad7c662dbc35

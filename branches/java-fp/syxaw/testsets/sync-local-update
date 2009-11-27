@@ -1,0 +1,73 @@
+# Tests local updates: insert, delete, update and move 
+# of file and dirs
+createprop syxaw.firstversion=10
+create --clean buzz
+createprop syxaw.firstversion=20
+create --clean rex
+:rex ln buzz/
+
+# Inserts
+:rex touchf //buzzf-0 b22f0:1024
+:rex mkdir //buzzd-0
+:rex mkdir //buzzd-1
+:rex touchf //buzzd-0/buzzf-1 b22f1:1024
+:rex sync
+
+# Verify inserts
+:buzz verify // 11 * -.
+:buzz verify //buzzf-0 10 * -. b22f0:1024
+:buzz verify //buzzd-0
+:buzz verify //buzzd-1
+:buzz verify //buzzd-0/buzzf-1 10 * -. b22f1:1024
+:rex verify // * 11 .-
+:rex verify //buzzf-0 * 10 .- b22f0:1024
+:rex verify //buzzd-0
+:rex verify //buzzd-1
+:rex verify //buzzd-0/buzzf-1 * 10 .- b22f1:1024
+
+# Updates
+:rex touchf //buzzf-0 b22f01:512
+:rex mv //buzzd-0 //buzzd-01
+:rex sync
+
+#Verify updates
+:buzz verify // 12 * -.
+:buzz verify //buzzf-0 11 * -. b22f01:512
+:buzz verify //buzzd-01
+:buzz verify //buzzd-1
+:buzz verify //buzzd-01/buzzf-1 10 * -. b22f1:1024
+:rex verify // * 12 .-
+:rex verify //buzzf-0 * 11 .- b22f01:512
+:rex verify //buzzd-01
+:rex verify //buzzd-1
+:rex verify //buzzd-01/buzzf-1 * 10 .- b22f1:1024
+
+# Moves
+:rex mv //buzzd-01 //buzzd-1
+:rex mv //buzzd-1/buzzd-01/buzzf-1 //buzzd-1
+:rex sync
+
+# Verify moves
+:buzz verify // 13 * -.
+:buzz verify //buzzd-1
+:buzz verify //buzzd-1/buzzd-01
+:buzz verify //buzzd-1/buzzf-1 10 * -. b22f1:1024
+:rex verify // * 13 .-
+:rex verify //buzzd-1
+:rex verify //buzzd-1/buzzd-01
+:rex verify //buzzd-1/buzzf-1 * 10 .- b22f1:1024
+
+# Deletes
+:rex rm //buzzd-1/buzzf-1
+:rex rm //buzzd-1/buzzd-01
+:rex sync
+
+# Verify deletes
+:buzz verify // 14 * -.
+:buzz verify --noexist //buzzd-1/buzzf-1
+:buzz verify --noexist //buzzd-1/buzzd-01
+:rex verify // * 14 .-
+:rex verify --noexist //buzzd-1/buzzf-1
+:rex verify --noexist //buzzd-1/buzzd-01
+
+# arch-tag: b9b1dd24-516b-48be-bb54-6b0ad8688ff9

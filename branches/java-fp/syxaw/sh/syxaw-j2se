@@ -1,0 +1,30 @@
+#!/bin/bash
+# arch-tag: a9cb8678-55e4-4593-98b7-6437e1043c25
+DEFOPTS="-Dsyxaw.http.listenport=42000 -Dsyxaw.syncd=true -Dsyxaw.http.requestport=42001 -Dsyxaw.nfsd=false -Dsyxaw.cliserver.oneshot=true -Dsyxaw.cliserver.port=42003 -Dsyxaw.rmiapi=false -Dsyxaw.debug.dirmod=true -Dsyxaw.firstversion=20000"
+SYXAW_HOME=..
+if [ $1 = --client ]; then
+    JARS=$SYXAW_HOME/=build/fp/fcfp-syxaw-compl.jar;
+    shift;
+else
+    JARS=`echo $SYXAW_HOME/contrib/jar/*.jar | sed -e 's/\ /:/g'`:\
+$SYXAW_HOME/=build/lib/nfsd-stubs.jar
+    JARS=$JARS:`echo $SYXAW_HOME/=build/fp/fcfp-syxaw.jar | sed -e 's/\ /:/g'`
+fi
+if test `uname | grep -i cygwin`; then
+  echo 'SYXAW: I seem to be running on cygwin'
+  JARS=`cygpath -pd $JARS` # To windows path
+  CYGOPTS=$'-Dline.separator=\n'
+else
+  CYGOPTS=-Ddummy.option; # Hack; 
+fi
+
+echo "SYXAW: User opts=$SYXAW_GOPTS $*" #> syxaw.log
+echo "SYXAW: CLASSPATH=$JARS" 
+$JAVA_HOME/bin/java -cp $JARS "$CYGOPTS" \
+$DEFOPTS $SYXAW_GOPTS $* fc.fp.syxaw.fs.Syxaw
+
+
+
+
+
+

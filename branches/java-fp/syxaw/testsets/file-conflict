@@ -1,0 +1,36 @@
+# Test conflict detection, data in conflict state, and resolve
+createprop syxaw.firstversion=10 syxaw.uid.seed=31337
+create --clean buzz
+createprop syxaw.firstversion=20
+create --clean rex
+:buzz touchf //test 9e7f11e:1024
+# ls needed to get assign uid to file
+:buzz ls //
+:rex ln buzz/9dWlO3b43HNup_Azlf4pBQ //test 
+:rex sync //test
+:buzz touchf //test c0f11c71:577
+:rex touchf //test c0f11c72:528
+:rex sync --noconflictfails //test
+# Verify conflict status on rex, non conflict on buzz
+:buzz verify //test 11 * -. c0f11c71:577
+:rex verify --conflict //test * 10 .x c0f11c72:528
+:rex verify --conflict --conflictstream //test * * * c0f11c71:577
+##:rex lls //test
+
+# Resolve to version on Rex
+:rex conflict //test -r
+# The one below ensures flags mark that we have local changes
+# It's needed because the current API is too limited:
+# f.conflictsResolved(linkver,localmods) is really needed!
+:rex meta //test flags=.x
+##:rex lls //test
+
+# Verify no conflict
+:rex verify --noconflict //test * * * c0f11c72:528
+
+# Sync and verify
+:rex sync //test
+:buzz verify //test 12 * -. c0f11c72:528
+:rex verify //test * 12 .- c0f11c72:528
+
+# arch-tag: fcd31133-dcb7-435d-a3d8-84771f6808a5

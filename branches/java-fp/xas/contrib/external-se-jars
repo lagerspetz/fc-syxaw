@@ -1,0 +1,16 @@
+# List of path elements in fuego core common pool
+# needed to run the software
+../${fc.contrib}/bouncy-castle-cldc.zip
+../${fc.contrib}/commons-codec-1.3.jar
+../${fc.contrib}/commons-fileupload-1.0.jar
+../${fc.contrib}/commons-httpclient-3.0-rc2.jar
+../${fc.contrib}/commons-logging.jar
+../${fc.contrib}/dom4j-full.jar
+../${fc.contrib}/fc-util.jar
+../${fc.contrib}/javax.servlet.jar
+../${fc.contrib}/org.mortbay.jetty-5.1.4.jar
+../${fc.contrib}/proguard-3.3.jar
+../${fc.contrib}/xmlpull_1_1_3_1.jar
+../${fc.contrib}/junit.jar
+
+# arch-tag: 3030f862-f063-496a-9b69-11d0648416fb

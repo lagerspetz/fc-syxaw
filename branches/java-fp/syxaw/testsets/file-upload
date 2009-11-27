@@ -1,0 +1,26 @@
+# Creates a file on buzz, links to it, syncs, updates on rex, and checks the
+# result
+# (Note: no dirsyncs)
+createprop syxaw.firstversion=10 syxaw.uid.seed=31337
+create --clean buzz
+createprop syxaw.firstversion=20
+create --clean rex
+:buzz touchf //test 0:0
+# ls needed to get assign uid to file
+:buzz ls //
+:rex ln buzz/9dWlO3b43HNup_Azlf4pBQ //test 
+:rex sync //test
+
+# Verify initial state
+:buzz verify //test 10 * -. 0:0
+:rex verify //test * 10 .- 0:0
+
+# Update + sync
+:rex touchf //test 7010ad:1024
+:rex sync //test
+
+# Verify upload
+:buzz verify //test 11 * -. 7010ad:1024
+:rex verify //test * 11 .- 7010ad:1024
+
+# arch-tag: e36bd438-2eae-4708-9ba9-251703e6a837

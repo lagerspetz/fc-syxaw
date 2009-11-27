@@ -1,0 +1,59 @@
+# What is REALLY strange here is that we must seed the UIDs;
+# Using currenttimemillis will yield same ids
+# buzz is server, rex is laptop
+cleanimage buzz
+createprop syxaw.firstversion=1000 syxaw.uid.seed=314
+create --debug buzz syxaw-roots 40000
+cleanimage rex
+createprop syxaw.firstversion=2000 syxaw.uid.seed=42
+create --debug rex syxaw-roots 40001
+cleanimage n95
+createprop syxaw.debug.syncprogress=true syxaw.firstversion=3000 syxaw.uid.seed=31137
+createn95 --debug n95 syxaw-roots 23902
+:rex sys cp testdata/demo/* syxaw-roots/n95
+:rex ln buzz/
+:rex sync
+:n95 ln buzz/ //
+:n95 touch //Image1 F im-01
+:n95 sync
+# Prepare for switch (automatically in the future)
+:rex sync
+# Switch n95 to rex; should not dl Image1 
+:n95 join 1002/rex/1001
+:n95 echo == NO IM1 WRITES ==
+:n95 sync
+
+# Local image from n95->rex
+:n95 touch //Image2 F im-02
+:n95 sync
+
+# Server up again -> Rex syncs with buzz
+:rex sync
+
+# n95 joins trunk; note NO UPLOADS
+:n95 join 1002
+:n95 sync
+
+# A few sync to test stable state
+:n95 sync
+:n95 sync
+echo All done!
+
+
+#cleanimage buzz
+#create --debug buzz syxaw-roots 40000
+#cleanimage rex
+#create --debug rex syxaw-roots 40001
+#cleanimage n95
+#createn95 --debug n95 syxaw-roots 23902
+#:rex ln buzz/
+#:rex sync
+#:n95 ln buzz/ //
+#:n95 touch //Image1.txt F im-01
+#:n95 sync
+## Prepare for switch (automatically in the future)
+#:rex sync
+## Switch n95 to rex
+#:n95 join 1002/rex/1001
+#:n95 log ===========================MARK====================
+#:n95 sync

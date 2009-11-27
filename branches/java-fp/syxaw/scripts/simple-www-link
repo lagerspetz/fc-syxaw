@@ -1,0 +1,11 @@
+# arch-tag: 4250c2a4-c336-4038-a2a7-856c774f0462
+create --debug --clean buzz syxaw-roots 40000
+:buzz ln simple-test.www-gw.syxaw.hiit.fi/?http://localhost://davtest/foo.txt foo.txt
+:buzz lls foo.txt
+:buzz sync foo.txt
+:buzz ls foo.txt
+:buzz cat foo.txt
+:buzz touch foo.txt F
+:buzz sync foo.txt
+:buzz ls foo.txt
+echo All done

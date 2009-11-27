@@ -1,0 +1,85 @@
+# arch-tag: 9e91e5ff-a4f9-44e3-a0ab-0c1a90047ebc
+# S=buzz, A=rex, B=bo
+cleanimage buzz
+create --debug buzz syxaw-roots 40000
+cleanimage rex
+createprop syxaw.firstversion=2000
+create --debug rex syxaw-roots 40001
+cleanimage bo
+createprop syxaw.firstversion=3000
+create --debug bo syxaw-roots 40002
+:rex ln buzz/
+:bo ln buzz/
+:bo sync
+:rex sync
+:bo sync
+# --- Everyone at 1002 ---
+#
+# Put data on S
+:buzz touch //data F
+#Handle case where S,A gets never ver than B before switch  
+#Note: this is fixed by the assumption of shared base on switch
+# Switch B to branch on A 
+:bo join 1002/rex/2000
+:bo sync
+
+:rex verify // 2001 * -. * joins=1002/rex/2001
+:bo verify // * 2001 .- * joins=1002/rex/2001
+# do some work on the branch between (rex,bo)
+# -- insert & merge
+:rex touch //rex-from-branch F cs-0002
+:bo touch //bo-from-branch F cs-0003
+:bo sync
+
+:rex verify // 2003 * -. * joins=1002/rex/2003
+:bo verify // * 2003 .- * joins=1002/rex/2003
+:rex verify //rex-from-branch 2000 * -.  61df1288927fad22abc55732fb511c8fca873fef
+:rex verify //bo-from-branch 2000 * -.  12615155cbc3f0ba05fc2b2da39d0906521d0787
+:bo verify //rex-from-branch * 2000 .-  61df1288927fad22abc55732fb511c8fca873fef
+:bo verify //bo-from-branch * 2000 .-  12615155cbc3f0ba05fc2b2da39d0906521d0787
+# -- update
+:bo touch //bo-from-branch F cs-0004
+:bo sync
+
+:rex verify // 2004 * -. * joins=1002/rex/2004
+:bo verify // * 2004 .- * joins=1002/rex/2004
+:rex verify //rex-from-branch 2000 * -.  61df1288927fad22abc55732fb511c8fca873fef
+:rex verify //bo-from-branch 2001 * -.  53ebb373824698cd9539d3b64fe390cb86b9fbcc
+:bo verify //rex-from-branch * 2000 .-  61df1288927fad22abc55732fb511c8fca873fef
+:bo verify //bo-from-branch * 2001 .-  53ebb373824698cd9539d3b64fe390cb86b9fbcc
+
+# Join main branch
+#:bo ls
+:bo join 1002
+# Sync, which should cause a proxy commit of 1003/rex/1004 to buzz
+:bo sync
+
+:buzz echo Verifying proxy commit
+:bo echo Verifying proxy commit
+:buzz verify // 1004 * -. * joins=1002/rex/2004
+:bo verify // * 1004 .- * joins=1002/rex/2004
+:buzz verify //rex-from-branch 1000 * -.  61df1288927fad22abc55732fb511c8fca873fef
+:buzz verify //bo-from-branch 1000 * -.  53ebb373824698cd9539d3b64fe390cb86b9fbcc
+:bo verify //rex-from-branch * 1000 .-  61df1288927fad22abc55732fb511c8fca873fef
+:bo verify //bo-from-branch * 1000 .-  53ebb373824698cd9539d3b64fe390cb86b9fbcc
+
+# Rex joins main
+:rex sync
+
+:buzz echo Verifying Rex join to main
+:rex echo Verifying Rex join to main
+:buzz verify // 1004 * -. * joins=1002/rex/2004
+:rex verify // * 1004 .- * joins=1002/rex/2004
+:buzz verify //rex-from-branch 1000 * -.  61df1288927fad22abc55732fb511c8fca873fef
+:buzz verify //bo-from-branch 1000 * -.  53ebb373824698cd9539d3b64fe390cb86b9fbcc
+:rex verify //rex-from-branch * 1000 .-  61df1288927fad22abc55732fb511c8fca873fef
+:rex verify //bo-from-branch * 1000 .-  53ebb373824698cd9539d3b64fe390cb86b9fbcc
+
+# This tests that no invalid base change to something older than linkver occurs
+#(See BUGFIX-050913-2) 
+
+:rex touch //rex.new F cset-01
+:rex sync
+:rex sync
+
+echo All done!

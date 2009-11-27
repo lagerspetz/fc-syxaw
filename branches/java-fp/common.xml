@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!--
+Copyright %YEAR% Helsinki Institute for Information Technology
+
+This file is a part of Fuego middleware.  Fuego middleware is free
+software; you can redistribute it and/or modify it under the terms
+of the MIT license, included as the file MIT-LICENSE in the Fuego
+middleware source distribution.  If you did not receive the MIT
+license with the distribution, write to the Fuego Core project at
+%ADDRESS%.
+-->
+
+<!-- Common definitions -->
+<!-- The file contains some reasonable default tasks;
+ to override just define a task with the same name in
+ the build.xml importing this file -->
+
+<project name="common">
+
+  <property name="jarname" value="${ant.project.name}.jar"/>
+  <property name="src" value="src"/>
+  <property name="build" value="=build"/>
+  <property name="build.class" value="${build}/classes"/>
+  <property name="build.lib" value="${build}/lib"/>
+  <property name="docs" value="docs"/>
+  <property name="doclists" value="${docs}/lists"/>
+  <property name="javadoc" value="${docs}/+api"/>
+  <property name="depend" value="+depend"/>
+  <property name="datadir" value="data"/>
+  <property name="resdir" value="res"/>
+  <property name="debug.level" value="DEBUG"/>
+
+  <property name="me.jarname" value="me-${jarname}"/>
+  <property name="me.javadoc" value="${docs}/+me-api"/>
+  <property name="me.build" value="${build}/me"/>
+  <property name="me.build.class" value="${me.build}/classes"/>
+
+
+
+  <property name="wtk.home" value="/opt/java/WTK2.2"/>
+  <property name="wtk.cldc.version" value="1.1"/>
+  <property name="wtk.midp.version" value="2.0"/>
+  <property name="wtk.cldc.lib" value="${wtk.home}/lib/cldcapi11.jar"/>
+  <property name="wtk.midp.lib" value="${wtk.home}/lib/midpapi20.jar"/>
+  <property name="wtk.bluetooth.enabled" value="true"/>
+  <property name="wtk.obfuscate" value="false"/>
+
+  <property name="fc.root" value="." /> 
+  <property name="fc.contrib" value="contrib/jar" /> 
+  <property name="contrib" value="contrib" /> 
+  <property name="contrib.shared.fp" 
+	    value="${contrib}/external-fp-jars"/>
+
+  <property name="contrib.shared.build" 
+	    value="${contrib}/external-build-jars"/>
+
+  <!-- Foundation profile -->
+  <property name="fp.jarname" value="fp-${jarname}"/>
+  <property name="fp.build.class" value="${build}/fp-classes"/>
+  <property name="fp.build.class.15" value="${build}/fp-classes.jdk5"/>
+  <property name="fp.build.lib" value="${build}/lib"/>
+  <property name="fp.depend" value="+fp.depend"/>
+  <property name="fp.exclude" value="../fp-exclude"/>
+  <property name="contrib.sys.fp" value="contrib/sys/fp"/> 
+  <path id="fp.bootclasspath">
+    <fileset dir=".." >
+      <include name="${contrib.sys.fp}/*.jar" />
+    </fileset>
+  </path>
+  <property name="contrib.shared.fp" 
+	    value="${contrib}/external-fp-jars"/>
+  <property name="retroweaver.version" value="1.2.5" /> 
+  <property name="retroweaver.rt" 
+	    value="../${fc.contrib}/retroweaver-rt-${retroweaver.version}.jar"/>  <property name="retroweaver.all"
+	    value="${fc.contrib}/retroweaver-all-${retroweaver.version}.jar"/>
+
+  <!-- This loads a path from a file with 1 path elem/line 
+       There has to be a better way...
+  -->
+  <macrodef name="loadpath">
+    <attribute name="pathid"/>
+    <attribute name="file"/>
+    <sequential>
+    <loadfile property="@{pathid}.1"
+      srcFile="@{file}"
+      failonerror="false" >
+      <filterchain>
+	<striplinecomments>
+	  <comment value="#"/>
+	</striplinecomments>	
+	<expandproperties/>
+	<prefixlines prefix="${path.separator}" />
+	<striplinebreaks/>
+      </filterchain>
+    </loadfile>
+    <path id="@{pathid}">
+      <pathelement path="${@{pathid}.1}" />
+    </path>
+    <!-- <echo>Loaded ${@{pathid}.1} into @{pathid}</echo> -->
+    </sequential>
+  </macrodef>
+
+  <macrodef name="runclass">
+    <attribute name="class"/>
+    <attribute name="verbosity" default="${debug.level}"/>
+    <sequential>
+      <java classname="@{class}" fork="true">
+      <jvmarg value="-Dfc.log.level=@{verbosity}"/>
+	<jvmarg value="-Dfc.log.logger=fc.util.log.SysoutLogger"/>
+	<syspropertyset>
+	  <propertyref prefix="fc" />
+	</syspropertyset>
+	<jvmarg value="-da"/>
+	<!-- <jvmarg value="-Xprof"/> -->
+	<classpath>
+	  <pathelement location="${fp.build.class}"/>
+	  <path refid="classpath.contrib.fp" />
+	  <pathelement location="${retroweaver.rt}" />
+	</classpath>
+    </java>
+    </sequential>
+  </macrodef>
+
+  <target name="list-java-command" depends="init" >
+      <path id="fp.contrib+boot">
+	<pathelement location="${fp.build.class}"/>
+	<path refid="classpath.contrib.fp" />
+	<path refid="fp.bootclasspath" />
+      </path>
+      <property name="debug.compile.classpath" refid="fp.contrib+boot" />
+      <echo>To run standalone, execute </echo>
+      <echo>java -cp ${debug.compile.classpath} ${fc.mainclass}</echo>
+  </target>
+
+  <target name="retroweave-cond" unless="${proptotest}" >
+      <retroweaver destdir="${destdir}" target="1.3" classpath="${classpath}"
+         verify="true" stripSignatures="true" 
+	 stripAttributes="true" failonerror="false">
+	<fileset dir="${srcdir}" includes="${classes}" />
+      </retroweaver>
+  </target>
+
+  <macrodef name="fp-compiler">
+    <attribute name="destdir" default="${fp.build.class}" />
+    <attribute name="destdir15" default="${fp.build.class.15}" />
+    <attribute name="jarfile" default="${fp.build.lib}/${fp.jarname}" />
+    <attribute name="jarfile15" default="${fp.build.lib}/fp-${ant.project.name}-generics.jar" />
+    <attribute name="extraclasses" default="" />
+    <attribute name="invocationid" default=".fp-compiler.1" />
+    <!-- Need to set this to 
+       a unique id for the invocation if calling fp-compiler many times -->
+    <element name="classes" optional="yes" implicit="yes" />
+    <sequential>
+      <fail if="@{invocationid}">Multiple invocations of fp-compiler. You
+      need to set a different invocationid for all of these</fail>
+      <property name="@{invocationid}" value="true" />
+      <path id="fp.contrib.5+boot">
+	<path refid="classpath.contrib.fp.5" />
+	<path refid="fp.bootclasspath" />
+      </path>
+      <property name="debug.compile.classpath.5" refid="fp.contrib.5+boot" />
+      <property name="debug.compile.classpath" refid="fp.contrib+boot" />
+      <!--
+      <echo message="Compiler classpath: ${debug.compile.classpath}" /> -->
+      <javac destdir="@{destdir15}" srcdir="${src}" debug="on"
+	     deprecation="on" target="1.5" source="1.5" 
+	     classpathref="fp.contrib.5+boot" 
+	     excludesfile="${fp.exclude}" >
+	<classes />
+      </javac>
+      <jar basedir="@{destdir15}" jarfile="@{jarfile15}" />
+      <uptodate property="@{invocationid}.uptodate" 
+		srcfile="@{jarfile15}" targetfile="@{jarfile}" />
+      <!-- <echo>UPTODATE is ${@{invocationid}.uptodate}</echo> -->
+      <property name="rw.verify.jre" refid="fp.bootclasspath" />
+      <property name="rw.verify.libs" refid="classpath.contrib.fp" />
+      <!-- Code for calling retroweawer only if needed. This is a
+	   bit convoluted, because the obvious method won't work
+	   (by passing a fileset ref, ant will then try to expand
+	   the text "<classes />" in the subtask.
+
+           So, we make a string out of it and mince it trough various
+	   steps to get it in shape. 
+	   NOTE1: Any space in the file names below src will break it
+                  (but that should not happen in a Java source tree)
+           NOTE2: No extra ./ may appear in the fileset names -->
+
+      <fileset dir="@{destdir15}" id="classes-set">
+	<classes />
+      </fileset>
+      <property name="@{invocationid}.rw.temp1" refid="classes-set" />
+      <pathconvert property="@{invocationid}.rw.files" pathsep=" " >
+	<path path="${@{invocationid}.rw.temp1}" />
+	<map from="${basedir}${file.separator}" to="" />
+      </pathconvert>
+      <!-- <echo>Classes to retroweave: ${@{invocationid}.rw.files}</echo>  -->
+      <antcall target="retroweave-cond">
+	<param name="destdir" value="@{destdir}" />
+	<param name="classpath" value="${rw.verify.jre};@{destdir};${retroweaver.rt};${rw.verify.libs};@{extraclasses}" />
+	<param name="classes" value="${@{invocationid}.rw.files}" />
+	<param name="proptotest" value="@{invocationid}.uptodate" />
+	<param name="srcdir" value="@{destdir15}" />
+      </antcall> 
+      <copy todir="@{destdir}" failonerror="false">
+	<fileset dir="${resdir}">
+	  <exclude name="**/.arch-ids/**"/>
+	</fileset>
+      </copy>
+      <jar basedir="@{destdir}" jarfile="@{jarfile}" />
+    </sequential>
+  </macrodef>
+
+
+  <target name="init">
+    <echo>========  Project ${ant.project.name} (Foundation profile) ===</echo>
+    <mkdir dir="${fp.build.class.15}" />
+    <mkdir dir="${fp.build.class}" />
+    <mkdir dir="${fp.build.lib}" />
+    <depend srcdir="${src}" destdir="${fp.build.class}" cache="${fp.depend}"
+            closure="true" />
+  </target>
+
+  <target name="clean" depends="init">
+    <delete dir="${build}"/>
+  </target>
+
+  <target name="bugs" depends="compile">
+    <!--pluginlist="../${fc.contrib}/plugin/coreplugin.jar" -->
+    <property name="bugs.classpath.contrib.fp" 
+	      refid="classpath.contrib.fp" />
+    <findbugs outputFile="+bugs.xml" reportLevel="low"
+	      jvmargs="-Xmx256m"
+	      pluginlist="../${fc.contrib}/plugin/coreplugin.jar" 
+	      excludeFilter="${datadir}/fb-exclude.xml">
+      <class location="${fp.build.class}"/>
+      <classpath refid="classpath.build" />
+      <auxClasspath refid="classpath.contrib.fp" />
+      <sourcePath path="${src}"/>
+    </findbugs>
+  </target>
+
+  <target name="test" depends="compile">
+    <fail unless="test.class"
+	  message="You need to set test.class before calling"/>
+    <java classname="junit.textui.TestRunner" output="+test.log" fork="true">
+      <jvmarg value="-ea"/>
+      <jvmarg value="-Dfc.log.level=${debug.level}"/>
+      <jvmarg value="-Dfc.log.logger=fc.util.log.SysoutLogger"/>
+      <arg value="${test.class}"/>
+      <classpath>
+	<pathelement location="${fp.build.class}"/>
+	<path refid="classpath.contrib.fp" />
+      </classpath>
+    </java>
+  </target>
+
+  <target name="compile" depends="init">
+    <fp-compiler />
+  </target>
+
+  <target name="eclipse-project" depends="init" >
+    <property name="eclipse.project.flags" value=""/>
+    <property name="eclipse.project.name" value="${ant.project.name}"/>
+    <property name="eclipse.project.prefix" value="fp-"/>
+    <path id="fp.contrib+boot">
+      <path refid="classpath.contrib.fp" />
+      <path refid="fp.bootclasspath" />
+    </path>
+    <property name="fp.contrib+boot.astext" refid="fp.contrib+boot"/>
+    <exec executable="../make-eclipse-proj.sh" >
+      <arg line="${eclipse.project.flags} ${eclipse.project.name}" />
+      <arg value="${eclipse.project.prefix}" />
+      <arg value="${fp.contrib+boot.astext}" />
+    </exec>
+  </target>
+
+</project>
+<!-- arch-tag: 39a03f71-a14e-40ad-a382-f259ea8e5037
+-->

@@ -1,0 +1,7 @@
+# arch-tag: 9ad6f7be-6d82-42f6-9d3d-76d99c248f3d
+:rex sys cp scriptdata/fub2html.xsl //
+:rex sys cp scriptdata/bib.css //
+:rex sys cp scriptdata/bib-abs.css //
+#:rex ln "buzz/5DwIT0u7K_GDne5GbYUstQ?xmlr-xp//*[./*[@name='project']/name[text()='Fuego Core']]/descendant-or-self::node()" //small.xml
+echo All done.
+echo "Link template ln \"alchemy/.........?xmlr-xp//*[./*[@name='project']/name[text()='Fuego Core']]/descendant-or-self::node()\" //small.xml"

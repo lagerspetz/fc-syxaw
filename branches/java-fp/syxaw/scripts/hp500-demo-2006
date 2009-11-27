@@ -1,0 +1,39 @@
+# Test demo 2006 sync capabilities
+createprop syxaw.proto.branchfence=1
+createprop syxaw.uid.seed=42 
+createprop fc.log.level=DEBUG
+cleanimage buzz
+create --debug buzz syxaw-roots 40000
+createprop syxaw.uid.seed=314
+#cleanimage rex
+#create --debug rex syxaw-roots 40001
+cleanimage bo
+create --debug bo syxaw-roots 40002
+cleanimage hamm
+create --debug hamm syxaw-roots 40003
+:buzz sys cp ../../../mw/res/demo-2006-meeting.xml //demo.xml
+:hamm sys cp ../../../mw/res/notify/servers.cfg //servers.cfg
+:hamm sys cp ../../../mw/res/notify/ec.cfg //ec.cfg
+:hamm sys cp ../../../mw/res/notify/ec2.cfg //ec2.cfg
+:buzz meta //demo.xml type=text/xml+raxs
+# ls is to lock guid on buzz
+:buzz ls
+
+:hamm fc.demo.captio.EventServer.start 0
+sleep 5
+
+# Start the editor manager
+:buzz fc.demo.captio.EditorManager.start demo.xml
+
+# Set up links; do init
+:bo ln buzz/5DwIT0u7K_GDne5GbYUstQ //demo.xml
+:bo fc.demo.raxs.RaxsDoc.init
+
+# Initial sync
+:bo sync //demo.xml
+:bo verify //demo.xml * * * ::../buzz/demo.xml type=text/xml+raxs
+
+:bo fc.demo.captio.Engine.start --wait demo.xml
+
+echo All done!
+# arch-tag: 1244079c-9376-489b-9d81-e110d28e0efc

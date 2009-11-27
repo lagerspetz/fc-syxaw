@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="depend">
+<target name="fuego-core" depends="raxs,syxaw,util,xas"/>
+<target name="raxs-deps" depends="util,xas">
+<copy todir="raxs/contrib">
+<fileset dir="util/${fp.build.lib}" includes="*.jar"/>
+</copy>
+<copy todir="raxs/contrib">
+<fileset dir="xas/${fp.build.lib}" includes="*.jar"/>
+</copy>
+</target>
+<target name="raxs" depends="util,xas">
+<copy todir="raxs/contrib">
+<fileset dir="util/${fp.build.lib}" includes="*.jar"/>
+</copy>
+<copy todir="raxs/contrib">
+<fileset dir="xas/${fp.build.lib}" includes="*.jar"/>
+</copy>
+<subant target="compile">
+<fileset dir="raxs" includes="build.xml"/>
+<property name="taskdefs.xml" value="ALREADYINCLUDED.taskdefs.xml"/>
+</subant>
+</target>
+<target name="syxaw-deps" depends="util,xas,raxs">
+<copy todir="syxaw/contrib">
+<fileset dir="util/${fp.build.lib}" includes="*.jar"/>
+</copy>
+<copy todir="syxaw/contrib">
+<fileset dir="xas/${fp.build.lib}" includes="*.jar"/>
+</copy>
+<copy todir="syxaw/contrib">
+<fileset dir="raxs/${fp.build.lib}" includes="*.jar"/>
+</copy>
+</target>
+<target name="syxaw" depends="util,xas,raxs">
+<copy todir="syxaw/contrib">
+<fileset dir="util/${fp.build.lib}" includes="*.jar"/>
+</copy>
+<copy todir="syxaw/contrib">
+<fileset dir="xas/${fp.build.lib}" includes="*.jar"/>
+</copy>
+<copy todir="syxaw/contrib">
+<fileset dir="raxs/${fp.build.lib}" includes="*.jar"/>
+</copy>
+<subant target="compile">
+<fileset dir="syxaw" includes="build.xml"/>
+<property name="taskdefs.xml" value="ALREADYINCLUDED.taskdefs.xml"/>
+</subant>
+</target>
+<target name="util-deps" depends=""/>
+<target name="util" depends="">
+<subant target="compile">
+<fileset dir="util" includes="build.xml"/>
+<property name="taskdefs.xml" value="ALREADYINCLUDED.taskdefs.xml"/>
+</subant>
+</target>
+<target name="xas-deps" depends="util">
+<copy todir="xas/contrib">
+<fileset dir="util/${fp.build.lib}" includes="*.jar"/>
+</copy>
+</target>
+<target name="xas" depends="util">
+<copy todir="xas/contrib">
+<fileset dir="util/${fp.build.lib}" includes="*.jar"/>
+</copy>
+<subant target="compile">
+<fileset dir="xas" includes="build.xml"/>
+<property name="taskdefs.xml" value="ALREADYINCLUDED.taskdefs.xml"/>
+</subant>
+</target>
+</project>

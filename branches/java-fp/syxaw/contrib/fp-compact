@@ -1,0 +1,13 @@
+#NOTE: (**.class) is a Proguard-specific thing, which is used here to exclude manifests
+# Include patterns for proguard fp build
+../${fc.contrib}/3dm.jar(**.class)
+../${fc.contrib}/axis.jar(**Chunked*.class)
+../${fc.contrib}/concurrent.jar(**.class)
+#../${fc.contrib}/kxml2.jar(**.class)
+../${fc.contrib}/xmlpull_1_1_3_1.jar(**.class)
+# Need to investigate why this is still needed
+../${fc.contrib}/sax2.jar(**.class)
+# Server only:
+#${fc.contrib}/org.mortbay.jetty-5.1.4.jar(**.class)
+#${fc.contrib}/servlet-2.3.jar(**.class)
+# arch-tag: 6ee2154a-a8d2-4373-937d-995208f8d705

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--- This is a template build file for subprojects.
+	Customize as needed at locations marked @@.
+-->
+<!--
+Copyright %YEAR% Helsinki Institute for Information Technology
+
+This file is a part of Fuego middleware.  Fuego middleware is free
+software; you can redistribute it and/or modify it under the terms
+of the MIT license, included as the file MIT-LICENSE in the Fuego
+middleware source distribution.  If you did not receive the MIT
+license with the distribution, write to the Fuego Core project at
+%ADDRESS%.
+-->
+
+
+<project name="@@PROJECTNAME" default="compile" basedir=".">
+
+  <property name="test.class" value="@@Project test suite class"/>
+
+  <property name="jarname" 
+	value="@@name of jar file (defaults to projectname.jar)"/>
+
+  <!-- Imports many common definitions and provides
+       default implementations for tasks -->	
+  <import file="../subproject.xml" />
+
+</project>
+<!-- arch-tag: 1aeca68f-8750-4976-b5c9-b1e5cd6006d6-MUSTCHANGEME
+(No closing comment here to draw your attention to fixing the arch-tag)

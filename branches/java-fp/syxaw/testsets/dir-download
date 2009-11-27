@@ -1,0 +1,22 @@
+# Tests download of dir (no depends, merges yet)
+createprop syxaw.firstversion=10 syxaw.syncdependent=false
+create --clean buzz
+createprop syxaw.firstversion=20
+create --clean rex
+:buzz touchf //testfile 31337:1024
+:rex ln buzz/
+# Reset link modflags -> no upload
+#sleep 10
+:rex meta // flags=.-
+#The line below needs to be fixed: (line OK, but Syxaw sets "m" flag??)
+#Scan for BUG-EXPOSE-051208 in source for pindown
+#:rex verify // * * .-
+:rex lls //
+:rex sync
+:buzz verify // 10 * -. 
+# Note: no dl -> testfile should be 0:0, may not have version
+# -> modflags may be set for file & dir (as versions differ)
+:buzz verify //testfile * * * 31337:1024
+:rex verify // * 10 * 
+:rex verify //testfile * * * 0:0
+# arch-tag: c578f2d8-c267-4a71-9443-faf69cb160ce

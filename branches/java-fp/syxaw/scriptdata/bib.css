@@ -1,0 +1,21 @@
+h1 { text-align: center; }
+.conftitle, .booktitle, .jtitle { font-style: italic; }
+.abstract { font-size: smaller; margin-left: 20pt; margin-right: 20pt; }
+.abshead { margin: 0pt; }
+.abstext { display: none; }
+.abshead:hover { text-decoration: underline; }
+.abshead:active + .abstext { display: block; }
+.abshead:focus + .abstext { display: block; }
+.abstext p { text-indent: 20pt; margin: 0pt; }
+.abstext p:first-child { text-indent: 0pt; }
+.comment { margin: 0pt; }
+.commenter { font-weight: bold; }
+.citelist { font-size: 50%; }
+.citelist p { margin: 0pt; }
+li { margin-bottom: 10pt; }
+.citelist li { margin-bottom: 0pt; }
+.pref { color: black; background: yellow; }
+.iref { color: black; background: cyan; }
+.reftree { color: white; background: grey; }
+/* arch-tag: fd64cdec-85fe-43b2-be7c-0793ef4c5ab6
+   */

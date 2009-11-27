@@ -1,0 +1,42 @@
+To set up a subproject you need to 
+
+1) create a subdirectory D of code/java named after the project
+
+2) copy subbuild.template to D/build.xml and modify according
+   to instructions in subbuild.template
+
+3) Follow the directory names in common.xml (source in src/ etc),
+   and the targets in code/java/build.xml will work automagically
+   (e.g. doc will break if you have some custom sourcepath)
+
+4) Provide targets named compile, clean etc., which will
+   be called from the top-level build (note that default
+   implementations are in common.xml)
+
+5) Make lists of classpath elements (usually jar files) needed
+   from the common contrib section (i.e. java/contrib). These
+   names are put in contrib/external-build-jars and 
+   contrib/external-se-jars, where the first holds a list of jars
+   needed by the build system (e.g. fancy ant tasks), and the 
+   latter those needed to run and compile your project. 
+   You may use ant property refs in the paths.
+   NOTE: You need a certain amount of jars for the build system anyway, 
+   as for example the taskdefs.xml file that is loaded by the default build.xml template requires
+   findbugs.jar.
+
+6) Put any project-local jars in D/contrib
+
+7) add D/depend.xml (use otherproject/depend.xml as template,
+   but remember the arch-ids)
+
+9) do a top level ant; ant clean compile (tow invocations due to
+   depend rebuild)
+
+If you break depend.xml, you need to manually edit it into 
+a shape that will succesfully import into build.xml
+(but it doesn't have to work if you touch some subproj/depend.xml,
+as then it will get regenerated)
+
+On using stable and unstable fuego code selectively: TDB...
+
+arch-tag: 4eda7272-37d7-46db-a4d4-fce8d7c6489a

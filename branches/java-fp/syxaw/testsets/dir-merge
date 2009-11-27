@@ -1,0 +1,21 @@
+# Tests directory merging (no depends)
+createprop syxaw.firstversion=10 syxaw.syncdependent=false
+create --clean buzz
+createprop syxaw.firstversion=20
+create --clean rex
+:buzz touchf //testfile 31337:1024
+:rex touchf //testfile2 31332:1024
+:rex ln buzz/
+# Force merge by setting modflags (ln probably sets these anyway)
+:rex meta // flags=.x
+:buzz meta // flags=x.
+:rex sync
+# Verify merge = both filenames on both ends 
+# Note empty files due to no dependsync 
+:buzz verify // 11 * * 
+:buzz verify //testfile * * * 31337:1024
+:buzz verify //testfile2 * * * 0:0
+:rex verify // * 11 * 
+:rex verify //testfile * * * 0:0
+:rex verify //testfile2 * * * 31332:1024
+# arch-tag: 5ce65603-c414-4a4f-b1df-92aa96348bdc

@@ -1,0 +1,23 @@
+# arch-tag: 09c3124a-dee8-43f7-a725-e250c99986ee
+# test a remote update; the final state should be
+#            dir:ver,linkver,flags  rexxie:ver,linkver,flags
+# buzz           1002,-1,-x                1001,-1,-x
+# rex	         -1,1002,x-                -1,1001,x-
+# Also, rexxie should have two lines of text
+#
+createprop syxaw.proto.branchfence=1
+cleanimage buzz
+create --debug buzz syxaw-roots 40000
+cleanimage rex
+create --debug rex syxaw-roots 40001
+:rex ln buzz/
+:rex touch //rexxie F cs-0001
+:rex sync
+:rex touch //rexxie F cs-0002
+:rex sync
+:buzz cat //rexxie
+:buzz verify // 1002 * -. 
+:buzz verify //rexxie 1001 * -. 1b7f996873a4a3c5e7c0382ad4f69d07ddc5f042
+:rex verify // * 1002 .-
+:rex verify //rexxie * 1001 .- 1b7f996873a4a3c5e7c0382ad4f69d07ddc5f042
+echo All done

@@ -1,0 +1,21 @@
+# Test to upload dir (no depends, merges yet)
+createprop syxaw.firstversion=10 syxaw.syncdependent=false
+create --clean buzz
+createprop syxaw.firstversion=20
+create --clean rex
+:rex ln buzz/
+# Reset link modflags -> no upload
+#sleep 10
+:rex meta // flags=.-
+:rex sync
+# Verify download
+:buzz verify // 10 * -. 
+:rex verify // * 10 .- 
+:rex touchf //testfile d110ad:1024
+:rex sync
+# Verify upload (note relaxed modflags due to nodepend)
+:buzz verify // 11 * *
+:buzz verify //testfile * * * 0:0
+:rex verify // * 11 * 
+:rex verify //testfile * * * d110ad:1024
+# arch-tag: c63b0577-a9f6-4cf5-bc62-e0550881f36e
