@@ -232,23 +232,23 @@ checking its hash, and then unpacking to ${src}
 
     <!-- sax2 -->
     <wget id="sax2"
-          href1="http://${sourceforge}/sourceforge/sax/sax%202.0/sax2.zip"
+          href1="http://${sourceforge}/project/sax/sax/SAX%202.0.2%20%28sax2r3%29%20final/sax2r3.zip"
           target="${lib}/sax2.jar"
           target.get="${temp.file}"
           unpack1="unpack-zip"
-          unpackloc1="sax2.jar"
-          sha="daf560b2bffe40669c2a1f39fbaf2c87ff7b6708" />
+          unpackloc1="sax2r3/sax2.jar"
+          sha="3d8dbf5cf8880df7f77ac843839cb52d2f67894c" />
 
     <!-- ** BUILD SUPPORT & ANT TASKS -->
 
-    <wget id="retroweavera-all"
+    <wget id="retroweaver-all"
           href1="http://${sourceforge}/sourceforge/retroweaver/retroweaver-1.2.5.zip"
           target="${lib}/retroweaver-all-1.2.5.jar"
           target.get="${temp.file}"
           unpack1="unpack-rw-zip"
           sha="0b68d433add3b18151c402aa9bc481b831a96900" />
 
-    <wget id="retroweavera-rt"
+    <wget id="retroweaver-rt"
           href1="http://${sourceforge}/sourceforge/retroweaver/retroweaver-1.2.5.zip"
           target="${lib}/retroweaver-rt-1.2.5.jar"
           target.get="${temp.file}"
